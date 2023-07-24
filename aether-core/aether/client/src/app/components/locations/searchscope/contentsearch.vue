@@ -216,7 +216,7 @@ export default {
           {
             id: 'searchTerm',
             visibleName: '',
-            description: "",
+            description: '',
             placeholder: 'Search content',
             maxCharCount: 100,
             minCharCount: 1,

@@ -15,7 +15,7 @@ let MintNewUniqueUsername = function (
   password: string,
   callback: any
 ) {
-  let execString = "go run ../../support/nameminter/main.go mint"
+  let execString = 'go run ../../support/nameminter/main.go mint'
   execString += ' --reqname="'
   execString += requestedUsername
   execString += '" --targetkeyfp="'
@@ -37,7 +37,7 @@ let MintNewUniqueUsername = function (
 }
 
 let FetchAlreadyMintedPendingUsernames = function (callback: any) {
-  let execString = "go run ../../support/nameminter/main.go batchdeliver"
+  let execString = 'go run ../../support/nameminter/main.go batchdeliver'
   exec(execString, function (e: any, stdout: any) {
     // , stderr: any
     if (e instanceof Error) {
@@ -52,7 +52,7 @@ let MarkUsernamesAsDelivered = function (
   deliveredUsernames: any,
   callback: any
 ) {
-  let execString = "go run ../../support/nameminter/main.go markdelivered"
+  let execString = 'go run ../../support/nameminter/main.go markdelivered'
   execString += " --deliveredfps='"
   execString += JSON.stringify(deliveredUsernames)
   execString += "'"

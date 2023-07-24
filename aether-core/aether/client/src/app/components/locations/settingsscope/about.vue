@@ -21,11 +21,11 @@ export default {
 var headline = '# About'
 let versionAndBuild = require('electron').remote.app.getVersion().split('+')
 var intro =
-  "**Aether Community Edition v" +
+  '**Aether Community Edition v' +
   versionAndBuild[0] +
-  ", build " +
+  ', build ' +
   versionAndBuild[1] +
-  "**"
+  '**'
 var content = `
 ### What is Aether?
 

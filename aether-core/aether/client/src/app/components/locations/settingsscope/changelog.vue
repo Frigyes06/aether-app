@@ -62,7 +62,8 @@ export default {
 }
 // These are var's and not let's because lets are defined only from the point they're in the code, and vars are defined for the whole scope regardless of where they are.
 var headline = '# Changelog'
-var intro = "**This is the change history between versions. The most current version of the changelog can be found [here](https://getaether.net/docs/changelog).**"
+var intro =
+  '**This is the change history between versions. The most current version of the changelog can be found [here](https://getaether.net/docs/changelog).**'
 var content = `
 ## 2.1.0.dev.1
 *July 19, 2023*

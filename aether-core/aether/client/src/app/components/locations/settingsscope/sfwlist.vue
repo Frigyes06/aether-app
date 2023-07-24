@@ -63,7 +63,8 @@ export default {
 }
 // These are var's and not let's because lets are defined only from the point they're in the code, and vars are defined for the whole scope regardless of where they are.
 var headline = '# Safe-for-work communities list'
-var intro = "**Preferences related to the safe-for-work markings for communities.**"
+var intro =
+  '**Preferences related to the safe-for-work markings for communities.**'
 var content = `
 * SFW communities are communities that are chosen to be work-safe, and they contain some of the higher-quality discussion and content the network has available.
 
