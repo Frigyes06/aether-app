@@ -6,19 +6,22 @@ package refresher
 import (
 	"aether-core/aether/frontend/beapiconsumer"
 	"aether-core/aether/frontend/kvstore"
+
 	// "aether-core/aether/frontend/clapiconsumer"
 	"aether-core/aether/frontend/festructs"
 	// "aether-core/aether/io/api"
 	// pbstructs "aether-core/aether/protos/mimapi"
 	"aether-core/aether/services/globals"
 	"aether-core/aether/services/logging"
+
 	// // "github.com/davecgh/go-spew/spew"
 	// // "fmt"
 	// "encoding/json"
 	"strings"
 	// "sync"
-	"github.com/asdine/storm/q"
 	"time"
+
+	"github.com/asdine/storm/q"
 )
 
 // GenerateHomeView gets the top 10 most popular items in the communities you subscribe to, and sort them by rank.
@@ -29,7 +32,7 @@ func GenerateHomeView() {
 	sbs := globals.FrontendConfig.ContentRelations.GetAllSubbedBoards()
 	// Get the underlying compiled boards
 	subbedBoardFps := []string{}
-	for k, _ := range sbs {
+	for k := range sbs {
 		if !sbs[k].Notify {
 			continue
 		}
@@ -37,11 +40,11 @@ func GenerateHomeView() {
 	}
 	boardCarriers := *getBoardsByFpList(subbedBoardFps)
 	var thrs festructs.CThreadBatch
-	for k, _ := range boardCarriers {
+	for k := range boardCarriers {
 		// thrlen := min(len(boardCarriers[k].Threads), 10)
 		// boardThreads := boardCarriers[k].Threads[0:thrlen]
 		boardThreads := *(boardCarriers[k].GetTopThreadsForView(10))
-		for j, _ := range boardThreads {
+		for j := range boardThreads {
 			boardThreads[j].ViewMeta_BoardName = boardCarriers[k].Boards[0].Name
 		}
 		thrs = append(thrs, boardThreads...)
@@ -91,12 +94,12 @@ func GeneratePopularView() {
 	logging.Logf(1, "base board carriers length: %v", len(boardCarriers))
 	logging.Logf(1, "sfwlist length: %v", len(globals.FrontendConfig.ContentRelations.SFWList.Boards))
 	var thrs festructs.CThreadBatch
-	for k, _ := range boardCarriers {
+	for k := range boardCarriers {
 		// thrlen := min(len(boardCarriers[k].Threads), 10)
 		// boardThreads := boardCarriers[k].Threads[0:thrlen]
 		// thrs = append(thrs, boardThreads...)
 		boardThreads := *(boardCarriers[k].GetTopThreadsForView(10))
-		for j, _ := range boardThreads {
+		for j := range boardThreads {
 			boardThreads[j].ViewMeta_BoardName = boardCarriers[k].Boards[0].Name
 		}
 		thrs = append(thrs, boardThreads...)
@@ -198,7 +201,7 @@ func GenerateNewView() {
 func dedupePosts(posts []festructs.CompiledPost) festructs.CPostBatch {
 	m := make(map[string]bool)
 	deduped := []festructs.CompiledPost{}
-	for k, _ := range posts {
+	for k := range posts {
 		if m[posts[k].Fingerprint] {
 			// Already exists on the map - we have seen this before.
 			continue
@@ -213,7 +216,7 @@ func dedupePosts(posts []festructs.CompiledPost) festructs.CPostBatch {
 func dedupeThreads(threads []festructs.CompiledThread) festructs.CThreadBatch {
 	m := make(map[string]bool)
 	deduped := []festructs.CompiledThread{}
-	for k, _ := range threads {
+	for k := range threads {
 		if m[threads[k].Fingerprint] {
 			// Already exists on the map - we have seen this before.
 			logging.Logf(0, "This thread already exists, dedupe is removing it: %#v", threads[k])

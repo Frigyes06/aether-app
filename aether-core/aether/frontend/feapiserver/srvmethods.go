@@ -61,7 +61,7 @@ func (s *server) GetThreadAndPosts(ctx context.Context, req *pb.ThreadAndPostsRe
 		logging.Logf(1, "Getting BoardCarrier for in GetThreadAndPosts encountered an error. Error: %v", err)
 	}
 	b := festructs.CompiledBoard{}
-	for key, _ := range bc.Boards {
+	for key := range bc.Boards {
 		if bc.Boards[key].Fingerprint == fp {
 			b = bc.Boards[key]
 		}
@@ -97,7 +97,7 @@ func (s *server) GetBoardAndThreads(ctx context.Context, req *pb.BoardAndThreads
 		logging.Logf(1, "Getting BoardCarrier for in GetBoardAndThreads encountered an error. Error: %v", err)
 	}
 	b := festructs.CompiledBoard{}
-	for key, _ := range bc.Boards {
+	for key := range bc.Boards {
 		if bc.Boards[key].Fingerprint == fp {
 			b = bc.Boards[key]
 		}
@@ -111,7 +111,7 @@ func (s *server) GetBoardAndThreads(ctx context.Context, req *pb.BoardAndThreads
 	resp.Board.LastSeen = lastseen
 
 	threads := festructs.CThreadBatch{}
-	for k1, _ := range bc.Threads {
+	for k1 := range bc.Threads {
 		// Filter out the moddeletes / modapprovals based on the ruleset.
 		if bc.Threads[k1].Board == fp {
 			if bc.Threads[k1].CompiledContentSignals.ModApproved || bc.Threads[k1].CompiledContentSignals.SelfModApproved {
@@ -131,7 +131,7 @@ func (s *server) GetBoardAndThreads(ctx context.Context, req *pb.BoardAndThreads
 	}
 	// Convert all threads to protos
 	tprotos := []*feobjects.CompiledThreadEntity{}
-	for k, _ := range threads {
+	for k := range threads {
 		tprotos = append(tprotos, threads[k].Protobuf())
 	}
 	resp.Threads = tprotos
@@ -150,15 +150,15 @@ func (s *server) GetAllBoards(ctx context.Context, req *pb.AllBoardsRequest) (*p
 	}
 
 	cb := festructs.CBoardBatch{}
-	for key, _ := range boards {
-		for k2, _ := range boards[key].Boards {
+	for key := range boards {
+		for k2 := range boards[key].Boards {
 			item := boards[key].Boards[k2]
 			cb = append(cb, item)
 		}
 	}
 	cb.SortByThreadsCount()
 	cproto := []*feobjects.CompiledBoardEntity{}
-	for k, _ := range cb {
+	for k := range cb {
 		item := cb[k].Protobuf()
 		cproto = append(cproto, item)
 		subbed, notify, lastseen := globals.FrontendConfig.ContentRelations.IsSubbedBoard(item.Fingerprint)
@@ -225,7 +225,7 @@ func (s *server) GetUserAndGraph(ctx context.Context, req *pb.UserAndGraphReques
 			logging.Logf(1, "Getting User Header Carrier for GetUserAndGraph encountered an error. Error: %v", err)
 		}
 		u := festructs.CompiledUser{}
-		for key, _ := range uh.Users {
+		for key := range uh.Users {
 			if uh.Users[key].Fingerprint == fp {
 				u = uh.Users[key]
 			}
@@ -456,16 +456,16 @@ func (s *server) RequestBoardReports(ctx context.Context, req *pb.BoardReportsRe
 		logging.Logf(1, "Fetching threads of this board to get the reports failed. Error: %v Board FP: %v", err, req.GetBoardFingerprint())
 	}
 	rtes := []*feobjects.ReportsTabEntry{}
-	for k, _ := range threadCarriers {
+	for k := range threadCarriers {
 		// Get all reportes threads and posts in this thread carrier
 		thrs := getReportedThreads(threadCarriers[k].Threads)
 		psts := getReportedPosts(threadCarriers[k].Posts)
 		// And convert them to ReportsTabEntries, then protobufs
-		for k2, _ := range thrs {
+		for k2 := range thrs {
 			entry := festructs.NewReportsTabEntryFromThread(&thrs[k2])
 			rtes = append(rtes, entry.Protobuf())
 		}
-		for k3, _ := range psts {
+		for k3 := range psts {
 			entry := festructs.NewReportsTabEntryFromPost(&psts[k3])
 			rtes = append(rtes, entry.Protobuf())
 		}
@@ -479,7 +479,7 @@ func (s *server) RequestBoardReports(ctx context.Context, req *pb.BoardReportsRe
 
 func getReportedThreads(sl []festructs.CompiledThread) []festructs.CompiledThread {
 	reported := []festructs.CompiledThread{}
-	for k, _ := range sl {
+	for k := range sl {
 		if len(sl[k].CompiledContentSignals.Reports) > 0 && !sl[k].CompiledContentSignals.SelfModIgnored {
 			reported = append(reported, sl[k])
 		}
@@ -489,7 +489,7 @@ func getReportedThreads(sl []festructs.CompiledThread) []festructs.CompiledThrea
 
 func getReportedPosts(sl []festructs.CompiledPost) []festructs.CompiledPost {
 	reported := []festructs.CompiledPost{}
-	for k, _ := range sl {
+	for k := range sl {
 		if len(sl[k].CompiledContentSignals.Reports) > 0 && !sl[k].CompiledContentSignals.SelfModIgnored {
 			reported = append(reported, sl[k])
 		}
@@ -505,16 +505,16 @@ func (s *server) RequestBoardModActions(ctx context.Context, req *pb.BoardModAct
 		logging.Logf(1, "Fetching threads of this board to get the ModActions failed. Error: %v Board FP: %v", err, req.GetBoardFingerprint())
 	}
 	rtes := []*feobjects.ModActionsTabEntry{}
-	for k, _ := range threadCarriers {
+	for k := range threadCarriers {
 		// Get all ModActioned threads and posts in this thread carrier
 		thrs := getModActionedThreads(threadCarriers[k].Threads)
 		psts := getModActionedPosts(threadCarriers[k].Posts)
 		// And convert them to ModActionsTabEntries, then protobufs
-		for k2, _ := range thrs {
+		for k2 := range thrs {
 			entry := festructs.NewModActionsTabEntryFromThread(&thrs[k2])
 			rtes = append(rtes, entry.Protobuf())
 		}
-		for k3, _ := range psts {
+		for k3 := range psts {
 			entry := festructs.NewModActionsTabEntryFromPost(&psts[k3])
 			rtes = append(rtes, entry.Protobuf())
 		}
@@ -529,7 +529,7 @@ func (s *server) RequestBoardModActions(ctx context.Context, req *pb.BoardModAct
 // For these two below, we also want to do modapprovals in the future, not just modblocks. TODO
 func getModActionedThreads(sl []festructs.CompiledThread) []festructs.CompiledThread {
 	modBlocked := []festructs.CompiledThread{}
-	for k, _ := range sl {
+	for k := range sl {
 		if len(sl[k].CompiledContentSignals.ModBlocks) > 0 && !sl[k].CompiledContentSignals.SelfModIgnored {
 			modBlocked = append(modBlocked, sl[k])
 		}
@@ -539,7 +539,7 @@ func getModActionedThreads(sl []festructs.CompiledThread) []festructs.CompiledTh
 
 func getModActionedPosts(sl []festructs.CompiledPost) []festructs.CompiledPost {
 	modBlocked := []festructs.CompiledPost{}
-	for k, _ := range sl {
+	for k := range sl {
 		if len(sl[k].CompiledContentSignals.ModBlocks) > 0 && !sl[k].CompiledContentSignals.SelfModIgnored {
 			modBlocked = append(modBlocked, sl[k])
 		}

@@ -46,7 +46,7 @@ func findPost(sId Searchable) (festructs.CompiledPost, error) {
 
 func findPosts(searchResults search.SearchResults) []festructs.CompiledPost {
 	posts := []festructs.CompiledPost{}
-	for k, _ := range searchResults.Results {
+	for k := range searchResults.Results {
 		if searchResults.Results[k].Id.EntityType != "Post" {
 			continue
 		}
@@ -82,7 +82,7 @@ func findThread(sId Searchable) (festructs.CompiledThread, error) {
 
 func findThreads(searchResults search.SearchResults) []festructs.CompiledThread {
 	threads := []festructs.CompiledThread{}
-	for k, _ := range searchResults.Results {
+	for k := range searchResults.Results {
 		if searchResults.Results[k].Id.EntityType != "Thread" {
 			continue
 		}
@@ -119,7 +119,7 @@ func findBoard(searchResult search.SearchResult) (festructs.CompiledBoard, error
 
 func findBoards(searchResults search.SearchResults) []festructs.CompiledBoard {
 	boards := []festructs.CompiledBoard{}
-	for k, _ := range searchResults.Results {
+	for k := range searchResults.Results {
 		if searchResults.Results[k].Id.EntityType != "Board" {
 			continue
 		}
@@ -158,7 +158,7 @@ func findUser(searchResult search.SearchResult) (festructs.CompiledUser, error) 
 
 func findUsers(searchResults search.SearchResults) []festructs.CompiledUser {
 	users := []festructs.CompiledUser{}
-	for k, _ := range searchResults.Results {
+	for k := range searchResults.Results {
 		if searchResults.Results[k].Id.EntityType != "User" {
 			continue
 		}
@@ -182,12 +182,12 @@ func SearchUsers(searchText string) (festructs.CUserBatch, search.ScoreMap, erro
 /*----------  Search & find content (posts + threads)  ----------*/
 
 /*
-	Content is a composite type. This is more efficient than doing two searches, one for threads and one for posts, and then merging them together.
+Content is a composite type. This is more efficient than doing two searches, one for threads and one for posts, and then merging them together.
 */
 func findContent(searchResults search.SearchResults) ([]festructs.CompiledPost, []festructs.CompiledThread) {
 	posts := []festructs.CompiledPost{}
 	threads := []festructs.CompiledThread{}
-	for k, _ := range searchResults.Results {
+	for k := range searchResults.Results {
 		if searchResults.Results[k].Id.EntityType != "Post" && searchResults.Results[k].Id.EntityType != "Thread" {
 			continue
 		}
@@ -222,7 +222,7 @@ func SearchContent(searchText string) (festructs.CPostBatch, festructs.CThreadBa
 
 func makeScoreMap(sr search.SearchResults) search.ScoreMap {
 	sm := make(search.ScoreMap)
-	for k, _ := range sr.Results {
+	for k := range sr.Results {
 		sm[sr.Results[k].Id.Fingerprint] = sr.Results[k].Score
 	}
 	return sm
@@ -235,7 +235,7 @@ func makeScoreMap(sr search.SearchResults) search.ScoreMap {
 func GetNewFeedContent(newFeedItems []beapiconsumer.NewFeedItem) ([]festructs.CompiledPost, []festructs.CompiledThread) {
 	posts := []festructs.CompiledPost{}
 	threads := []festructs.CompiledThread{}
-	for k, _ := range newFeedItems {
+	for k := range newFeedItems {
 		if newFeedItems[k].EntityType != "Post" &&
 			newFeedItems[k].EntityType != "Thread" &&
 			newFeedItems[k].EntityType != "Vote" {

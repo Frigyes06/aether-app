@@ -57,7 +57,7 @@ func BOSliceToProtobuf(bos []BoardOwner) []*pb.BoardOwner {
 		return []*pb.BoardOwner{}
 	}
 	pbos := []*pb.BoardOwner{}
-	for key, _ := range bos {
+	for key := range bos {
 		pbos = append(pbos, bos[key].Protobuf())
 	}
 	return pbos
@@ -68,7 +68,7 @@ func FPSliceToProtobuf(fps []Fingerprint) []string {
 		return []string{}
 	}
 	fpstr := []string{}
-	for key, _ := range fps {
+	for key := range fps {
 		fpstr = append(fpstr, string(fps[key]))
 	}
 	return fpstr
@@ -241,7 +241,7 @@ func BoardOwnerSliceProtoToAPI(pbos []*pb.BoardOwner) []BoardOwner {
 		return []BoardOwner{}
 	}
 	abos := []BoardOwner{}
-	for key, _ := range pbos {
+	for key := range pbos {
 		bo := BoardOwner{}
 		bo.FillFromProtobuf(*pbos[key])
 		abos = append(abos, bo)
@@ -254,7 +254,7 @@ func FPSliceProtoToAPI(pfps []string) []Fingerprint {
 		return []Fingerprint{}
 	}
 	afps := []Fingerprint{}
-	for key, _ := range pfps {
+	for key := range pfps {
 		var fp Fingerprint
 		fp.FillFromProtobuf(pfps[key])
 		afps = append(afps, fp)

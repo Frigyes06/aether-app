@@ -5,15 +5,17 @@ package simplemetricsserver
 import (
 	pb "aether-core/aether/backend/metrics/proto"
 	"fmt"
+
 	// "github.com/davecgh/go-spew/spew"
-	"golang.org/x/net/context"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
 	"os"
 	"path/filepath"
 	"time"
+
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 var Buf map[int64][]pb.Metrics // There can be multiple metrics pages arriving in the same UNIX timestamp, hence the []slice.
@@ -255,7 +257,7 @@ func ProcessConnectionStates(rawData []pb.ConnState, rawDbStateData []pb.DbState
 		n.Connections = append(n.Connections, connConvert(*val.Connection))
 		finalData.AddNode(n)
 	}
-	for key, _ := range finalData.Nodes {
+	for key := range finalData.Nodes {
 		// Get Db Size.
 		fi, _ := os.Stat(filepath.Join("/Users/Helios/Library/Application Support/Air Labs", finalData.Nodes[key].Name, "backend/AetherDB.db"))
 		// get the size

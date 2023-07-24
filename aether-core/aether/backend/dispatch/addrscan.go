@@ -8,9 +8,11 @@ import (
 	pers "aether-core/aether/io/persistence"
 	"aether-core/aether/services/globals"
 	"aether-core/aether/services/logging"
+
 	// "aether-core/aether/services/safesleep"
 	"errors"
 	"fmt"
+
 	// "github.com/pkg/errors"
 	// "strings"
 	"aether-core/aether/services/toolbox"
@@ -38,7 +40,7 @@ func filterByLastSuccessfulPing(addrs []api.Address, scanStart api.Timestamp) []
 	live := []api.Address{}
 	cutoff := api.Timestamp(time.Unix(int64(scanStart), 0).Add(-2 * time.Minute).Unix())
 	// Cutoff is 2 minutes before the threshold, because our pinger accepts a node whose last successful ping was within 2 minutes as online.
-	for key, _ := range addrs {
+	for key := range addrs {
 		if addrs[key].LastSuccessfulPing >= cutoff {
 			live = append(live, addrs[key])
 		}
@@ -49,7 +51,7 @@ func filterByLastSuccessfulPing(addrs []api.Address, scanStart api.Timestamp) []
 func filterByAddressType(addrType uint8, addrs []api.Address) ([]api.Address, []api.Address) {
 	filteredAddrs := []api.Address{}
 	remainder := []api.Address{}
-	for key, _ := range addrs {
+	for key := range addrs {
 		if addrs[key].Type == addrType {
 			filteredAddrs = append(filteredAddrs, addrs[key])
 		} else {
@@ -240,14 +242,14 @@ func findOnlineNodesV2(count int, reqType, addrType int, excl *[]api.Address, re
 	l := []api.Address{}
 	if !reverse {
 		// If this is a non-reverse (normal) find online request, we use the reverse dispatcher exclusion queue.
-		for k, _ := range liveNodes {
+		for k := range liveNodes {
 			if !dpe.IsExcluded(liveNodes[k]) {
 				l = append(l, liveNodes[k])
 			}
 		}
 	} else {
 		// If this is a reverse find online request, we use the reverse dispatcher exclusion queue.
-		for k, _ := range liveNodes {
+		for k := range liveNodes {
 			if !reverseDpe.IsExcluded(liveNodes[k]) {
 				l = append(l, liveNodes[k])
 			}
@@ -265,7 +267,7 @@ func findOnlineNodesV2(count int, reqType, addrType int, excl *[]api.Address, re
 func pickUnconnectedAddrs(addrs []api.Address) ([]api.Address, []api.Address) {
 	nonconnecteds := []api.Address{}
 	connecteds := []api.Address{}
-	for key, _ := range addrs {
+	for key := range addrs {
 		if addrs[key].LastSuccessfulSync == 0 {
 			nonconnecteds = append(nonconnecteds, addrs[key])
 		} else {

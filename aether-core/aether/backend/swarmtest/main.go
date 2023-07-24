@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+
 	// "github.com/davecgh/go-spew/spew"
 	"io/ioutil"
 	"log"
@@ -206,7 +207,6 @@ generateSwarmSchedules generates the connection requests that we need to deal wi
 
 Simple:
 You have one bootstrap node, and all other nodes connect to that node at the same time. What this does is that it gets all the data from the bootstrap node and puts them in each. Now, in the first load, the other nodes might not be able to find each other, because they're connecting at the same time and the bs node might not be able to add them to its database fast enough so that their link communicates to others. However, The second sync with that node a minute later will be able to distribute to each of them each other's addresses, and they should then start syncing.
-
 */
 func generateSwarmSchedules(nodes []node, testType string) {
 	var planCommands []PlanCommand
@@ -394,7 +394,7 @@ func main() {
 	// For each node that we have requested
 	nodes := generateSwarmNames()
 	// spew.Dump(ports.GetFreePorts(100))
-	for i, _ := range nodes {
+	for i := range nodes {
 		generateNodeData(&nodes[i])
 		serverInstance := startServingStaticNodeAsDataDonor(nodes[i])
 		insertDataIntoBackendNodeInstance(nodes[i])

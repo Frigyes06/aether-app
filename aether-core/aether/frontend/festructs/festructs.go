@@ -9,6 +9,7 @@ import (
 	"aether-core/aether/services/ca"
 	"aether-core/aether/services/globals"
 	"aether-core/aether/services/logging"
+
 	// "github.com/willf/bloom"
 	pbstructs "aether-core/aether/protos/mimapi"
 	"math"
@@ -60,9 +61,9 @@ func CommitSearchIndexes(wg *sync.WaitGroup) {
 	ub = append(ub, CUserIndexCache)
 
 	/* Commit board batches */
-	for batchIndex, _ := range bb {
+	for batchIndex := range bb {
 		ib := search.NewBatch()
-		for k, _ := range bb[batchIndex] {
+		for k := range bb[batchIndex] {
 			ib.Index(bb[batchIndex][k].SearchId(), bb[batchIndex][k])
 		}
 		err := search.CommitBatch(ib)
@@ -72,9 +73,9 @@ func CommitSearchIndexes(wg *sync.WaitGroup) {
 	}
 
 	/* Commit thread batches */
-	for batchIndex, _ := range tb {
+	for batchIndex := range tb {
 		ib := search.NewBatch()
-		for k, _ := range tb[batchIndex] {
+		for k := range tb[batchIndex] {
 			ib.Index(tb[batchIndex][k].SearchId(), tb[batchIndex][k])
 		}
 		err := search.CommitBatch(ib)
@@ -84,9 +85,9 @@ func CommitSearchIndexes(wg *sync.WaitGroup) {
 	}
 
 	/* Commit post batches */
-	for batchIndex, _ := range pb {
+	for batchIndex := range pb {
 		ib := search.NewBatch()
-		for k, _ := range pb[batchIndex] {
+		for k := range pb[batchIndex] {
 			ib.Index(pb[batchIndex][k].SearchId(), pb[batchIndex][k])
 		}
 		err := search.CommitBatch(ib)
@@ -96,9 +97,9 @@ func CommitSearchIndexes(wg *sync.WaitGroup) {
 	}
 
 	/* Commit user batches */
-	for batchIndex, _ := range ub {
+	for batchIndex := range ub {
 		ib := search.NewBatch()
-		for k, _ := range ub[batchIndex] {
+		for k := range ub[batchIndex] {
 			ib.Index(ub[batchIndex][k].SearchId(), ub[batchIndex][k])
 		}
 		err := search.CommitBatch(ib)
@@ -185,7 +186,7 @@ func (c *CompiledPost) RefreshContentSignals(catds *CATDBatch, cfgs *CFGBatch, c
 }
 
 func (c *CompiledPost) RefreshUserHeader(boardSpecificUserHeaders CUserBatch) {
-	for k, _ := range boardSpecificUserHeaders {
+	for k := range boardSpecificUserHeaders {
 		if boardSpecificUserHeaders[k].Fingerprint == c.Owner.Fingerprint {
 			c.Owner = boardSpecificUserHeaders[k]
 			return
@@ -261,10 +262,10 @@ func (c *CompiledPost) RefreshExogenousContentSignals(bc *BoardCarrier, tc *Thre
 	/*----------  Modblock / modapprove state  ----------*/
 	// Behaviour: if at least one modblock, block it, if there is at least one modapprove, unblock it. so if something is both modblocked and modapproved, it will be visible.
 	// Approvals
-	for k, _ := range c.CompiledContentSignals.ModApprovals {
+	for k := range c.CompiledContentSignals.ModApprovals {
 		sourcefp := c.CompiledContentSignals.ModApprovals[k].SourceFp
 		b := &CompiledBoard{}
-		for k, _ := range bc.Boards {
+		for k := range bc.Boards {
 			if bc.Boards[k].Fingerprint == bc.Fingerprint {
 				b = &bc.Boards[k]
 			}
@@ -275,10 +276,10 @@ func (c *CompiledPost) RefreshExogenousContentSignals(bc *BoardCarrier, tc *Thre
 		}
 	}
 	// Blocks
-	for k, _ := range c.CompiledContentSignals.ModBlocks {
+	for k := range c.CompiledContentSignals.ModBlocks {
 		sourcefp := c.CompiledContentSignals.ModBlocks[k].SourceFp
 		b := &CompiledBoard{}
-		for k, _ := range bc.Boards {
+		for k := range bc.Boards {
 			if bc.Boards[k].Fingerprint == bc.Fingerprint {
 				b = &bc.Boards[k]
 			}
@@ -324,7 +325,7 @@ type CPostBatch []CompiledPost
 
 // IndexForSearch adds all entities in this batch into the search index.
 func (batch *CPostBatch) IndexForSearch() {
-	for k, _ := range *batch {
+	for k := range *batch {
 		CPostIndexCache = append(CPostIndexCache, (*batch)[k])
 	}
 	// if len(*batch) == 0 {
@@ -345,7 +346,7 @@ func (batch *CPostBatch) IndexForSearch() {
 
 func (batch *CPostBatch) Insert(ces []CompiledPost) {
 	toBeIndexed := CPostBatch{}
-	for k, _ := range ces {
+	for k := range ces {
 		i := batch.Find(ces[k].Fingerprint)
 		if i != -1 {
 			// Trigger insert. It'll only update if the lastupdate is newer.
@@ -362,7 +363,7 @@ func (batch *CPostBatch) Insert(ces []CompiledPost) {
 
 func (batch *CPostBatch) InsertFromProtobuf(ces []*pbstructs.Post) {
 	toBeIndexed := CPostBatch{}
-	for k, _ := range ces {
+	for k := range ces {
 		if ces[k] == nil {
 			continue
 		}
@@ -384,7 +385,7 @@ func (batch *CPostBatch) InsertFromProtobuf(ces []*pbstructs.Post) {
 }
 
 func (batch *CPostBatch) Find(postfp string) int {
-	for k, _ := range *batch {
+	for k := range *batch {
 		if postfp == (*batch)[k].Fingerprint {
 			return k
 		}
@@ -393,7 +394,7 @@ func (batch *CPostBatch) Find(postfp string) int {
 }
 
 func (batch *CPostBatch) Refresh(catds *CATDBatch, cfgs *CFGBatch, cmas *CMABatch, boardSpecificUserHeaders CUserBatch, nowts int64, bc *BoardCarrier, tc *ThreadCarrier) {
-	for k, _ := range *batch {
+	for k := range *batch {
 		(*batch)[k].Refresh(catds, cfgs, cmas, boardSpecificUserHeaders, nowts, bc, tc)
 	}
 }
@@ -413,7 +414,7 @@ func (batch *CPostBatch) Sort() {
 
 func (batch *CPostBatch) ToProtobuf() []*feobjects.CompiledPostEntity {
 	protos := []*feobjects.CompiledPostEntity{}
-	for k, _ := range *batch {
+	for k := range *batch {
 		p := (*batch)[k].Protobuf()
 		protos = append(protos, p)
 	}
@@ -490,7 +491,7 @@ func (c *CompiledThread) RefreshContentSignals(catds *CATDBatch, cfgs *CFGBatch,
 
 // RefreshUserHeader needs board fingerprint because user signals within user headers are scoped, global scope is available to all and without a board fp, those don't depend on any board scope. But within the boards, there is a scope that is based on elections, assignments, people choosing to trust certain people as mods only within that board, and that scope needs to be applied over.
 func (c *CompiledThread) RefreshUserHeader(boardSpecificUserHeaders CUserBatch) {
-	for k, _ := range boardSpecificUserHeaders {
+	for k := range boardSpecificUserHeaders {
 		if boardSpecificUserHeaders[k].Fingerprint == c.Owner.Fingerprint {
 			c.Owner = boardSpecificUserHeaders[k]
 			return
@@ -579,10 +580,10 @@ func (c *CompiledThread) RefreshExogenousContentSignals(bc *BoardCarrier) {
 	/*----------  Modblock / modapprove state  ----------*/
 	// Behaviour: if at least one modblock, block it, if there is at least one modapprove, unblock it. so if something is both modblocked and modapproved, it will be visible.
 	// Approvals
-	for k, _ := range c.CompiledContentSignals.ModApprovals {
+	for k := range c.CompiledContentSignals.ModApprovals {
 		sourcefp := c.CompiledContentSignals.ModApprovals[k].SourceFp
 		b := &CompiledBoard{}
-		for k, _ := range bc.Boards {
+		for k := range bc.Boards {
 			if bc.Boards[k].Fingerprint == bc.Fingerprint {
 				b = &bc.Boards[k]
 			}
@@ -593,10 +594,10 @@ func (c *CompiledThread) RefreshExogenousContentSignals(bc *BoardCarrier) {
 		}
 	}
 	// Blocks
-	for k, _ := range c.CompiledContentSignals.ModBlocks {
+	for k := range c.CompiledContentSignals.ModBlocks {
 		sourcefp := c.CompiledContentSignals.ModBlocks[k].SourceFp
 		b := &CompiledBoard{}
-		for k, _ := range bc.Boards {
+		for k := range bc.Boards {
 			if bc.Boards[k].Fingerprint == bc.Fingerprint {
 				b = &bc.Boards[k]
 			}
@@ -614,7 +615,7 @@ type CThreadBatch []CompiledThread
 
 // IndexForSearch adds all entities in this batch into the search index.
 func (batch *CThreadBatch) IndexForSearch() {
-	for k, _ := range *batch {
+	for k := range *batch {
 		CThreadIndexCache = append(CThreadIndexCache, (*batch)[k])
 	}
 
@@ -636,7 +637,7 @@ func (batch *CThreadBatch) IndexForSearch() {
 
 func (batch *CThreadBatch) Insert(cthreads []CompiledThread) {
 	toBeIndexed := CThreadBatch{}
-	for k, _ := range cthreads {
+	for k := range cthreads {
 		i := batch.Find(cthreads[k].Fingerprint)
 		if i != -1 {
 			// Trigger insert. It'll only update if the lastupdate is newer.
@@ -654,7 +655,7 @@ func (batch *CThreadBatch) Insert(cthreads []CompiledThread) {
 func (batch *CThreadBatch) InsertFromProtobuf(cthreads []*pbstructs.Thread) bool {
 	var hasNewThreads bool
 	toBeIndexed := CThreadBatch{}
-	for k, _ := range cthreads {
+	for k := range cthreads {
 		if cthreads[k] == nil {
 			continue
 		}
@@ -683,7 +684,7 @@ func (batch *CThreadBatch) InsertFromProtobuf(cthreads []*pbstructs.Thread) bool
 }
 
 func (batch *CThreadBatch) Find(threadfp string) int {
-	for k, _ := range *batch {
+	for k := range *batch {
 		if threadfp == (*batch)[k].Fingerprint {
 			return k
 		}
@@ -692,7 +693,7 @@ func (batch *CThreadBatch) Find(threadfp string) int {
 }
 
 func (batch *CThreadBatch) Refresh(catds *CATDBatch, cfgs *CFGBatch, cmas *CMABatch, boardSpecificUserHeaders CUserBatch, nowts int64, bc *BoardCarrier) {
-	for k, _ := range *batch {
+	for k := range *batch {
 		(*batch)[k].Refresh(catds, cfgs, cmas, boardSpecificUserHeaders, nowts, bc)
 	}
 }
@@ -712,7 +713,7 @@ func (batch *CThreadBatch) SortByCreation() {
 
 func (batch *CThreadBatch) ToProtobuf() []*feobjects.CompiledThreadEntity {
 	protos := []*feobjects.CompiledThreadEntity{}
-	for k, _ := range *batch {
+	for k := range *batch {
 		p := (*batch)[k].Protobuf()
 		protos = append(protos, p)
 	}
@@ -826,7 +827,7 @@ type CUserBatch []CompiledUser
 
 // IndexForSearch adds all entities in this batch into the search index.
 func (batch *CUserBatch) IndexForSearch() {
-	for k, _ := range *batch {
+	for k := range *batch {
 		CUserIndexCache = append(CUserIndexCache, (*batch)[k])
 	}
 	// if len(*batch) == 0 {
@@ -847,7 +848,7 @@ func (batch *CUserBatch) IndexForSearch() {
 
 func (batch *CUserBatch) Insert(cusers []CompiledUser) {
 	toBeIndexed := CUserBatch{}
-	for k, _ := range cusers {
+	for k := range cusers {
 		i := batch.Find(cusers[k].Fingerprint)
 		if i != -1 {
 			// Trigger insert. It'll only update if the lastupdate is newer.
@@ -863,7 +864,7 @@ func (batch *CUserBatch) Insert(cusers []CompiledUser) {
 }
 
 func (batch *CUserBatch) InsertWithSignalMerge(cusers []CompiledUser) {
-	for k, _ := range cusers {
+	for k := range cusers {
 		i := batch.Find(cusers[k].Fingerprint)
 		if i != -1 {
 			// Trigger insert. It'll only update if the lastupdate is newer.
@@ -878,7 +879,7 @@ func (batch *CUserBatch) InsertWithSignalMerge(cusers []CompiledUser) {
 
 func (batch *CUserBatch) InsertFromProtobuf(cusers []*pbstructs.Key, nowts int64) {
 	toBeIndexed := CUserBatch{}
-	for k, _ := range cusers {
+	for k := range cusers {
 		if cusers[k] == nil {
 			continue
 		}
@@ -897,7 +898,7 @@ func (batch *CUserBatch) InsertFromProtobuf(cusers []*pbstructs.Key, nowts int64
 }
 
 func (batch *CUserBatch) Find(userfp string) int {
-	for k, _ := range *batch {
+	for k := range *batch {
 		if userfp == (*batch)[k].Fingerprint {
 			return k
 		}
@@ -906,7 +907,7 @@ func (batch *CUserBatch) Find(userfp string) int {
 }
 
 func (batch *CUserBatch) Refresh(cpts *CPTBatch, ccns *CCNBatch, cf451s *CF451Batch, cpes *CPEBatch, localDefaultMods []string, domainfp string, totalPop int) {
-	for k, _ := range *batch {
+	for k := range *batch {
 		(*batch)[k].Refresh(cpts, ccns, cf451s, cpes, localDefaultMods, domainfp, totalPop)
 	}
 }
@@ -966,7 +967,7 @@ func NewCBoard(rp *pbstructs.Board) CompiledBoard {
 		Meta:       rp.GetMeta(),
 	}
 	if bo := rp.GetBoardOwners(); len(bo) > 0 {
-		for k, _ := range bo {
+		for k := range bo {
 			cb.BoardOwners = append(cb.BoardOwners, bo[k].GetKeyFingerprint())
 		}
 	}
@@ -976,7 +977,7 @@ func NewCBoard(rp *pbstructs.Board) CompiledBoard {
 
 // GetUserHeader attempts to get the local user header if available within that board scope, if not, it attempts to get the global user header, if present.
 func (cb *CompiledBoard) GetUserHeader(fp string) CompiledUser {
-	for k, _ := range cb.LocalScopeUserHeaders {
+	for k := range cb.LocalScopeUserHeaders {
 		if cb.LocalScopeUserHeaders[k].Fingerprint == fp {
 			return cb.LocalScopeUserHeaders[k]
 		}
@@ -1000,11 +1001,11 @@ func (cb *CompiledBoard) GetDefaultMods() []string {
 	dm = append(dm, cb.BoardOwners...)
 	// To map and back again to remove dedupes.
 	m := make(map[string]bool)
-	for k, _ := range dm {
+	for k := range dm {
 		m[dm[k]] = true
 	}
 	result := []string{}
-	for k, _ := range m {
+	for k := range m {
 		result = append(result, k)
 	}
 	return result
@@ -1020,7 +1021,7 @@ func (c *CompiledBoard) RefreshContentSignals(catds *CATDBatch, cfgs *CFGBatch, 
 }
 
 func (c *CompiledBoard) RefreshUserHeader(boardSpecificUserHeaders CUserBatch) {
-	for k, _ := range boardSpecificUserHeaders {
+	for k := range boardSpecificUserHeaders {
 		if boardSpecificUserHeaders[k].Fingerprint == c.Owner.Fingerprint {
 			c.Owner = boardSpecificUserHeaders[k]
 			return
@@ -1091,10 +1092,10 @@ func (c *CompiledBoard) RefreshExogenousContentSignals(bc *BoardCarrier) {
 	/*----------  Modblock / modapprove state  ----------*/
 	// Behaviour: if at least one modblock, block it, if there is at least one modapprove, unblock it. so if something is both modblocked and modapproved, it will be visible.
 	// Approvals
-	for k, _ := range c.CompiledContentSignals.ModApprovals {
+	for k := range c.CompiledContentSignals.ModApprovals {
 		sourcefp := c.CompiledContentSignals.ModApprovals[k].SourceFp
 		b := &CompiledBoard{}
-		for k, _ := range bc.Boards {
+		for k := range bc.Boards {
 			if bc.Boards[k].Fingerprint == bc.Fingerprint {
 				b = &bc.Boards[k]
 			}
@@ -1105,10 +1106,10 @@ func (c *CompiledBoard) RefreshExogenousContentSignals(bc *BoardCarrier) {
 		}
 	}
 	// Blocks
-	for k, _ := range c.CompiledContentSignals.ModBlocks {
+	for k := range c.CompiledContentSignals.ModBlocks {
 		sourcefp := c.CompiledContentSignals.ModBlocks[k].SourceFp
 		b := &CompiledBoard{}
-		for k, _ := range bc.Boards {
+		for k := range bc.Boards {
 			if bc.Boards[k].Fingerprint == bc.Fingerprint {
 				b = &bc.Boards[k]
 			}
@@ -1124,7 +1125,7 @@ type CBoardBatch []CompiledBoard
 
 // IndexForSearch adds all entities in this batch into the search index.
 func (batch *CBoardBatch) IndexForSearch() {
-	for k, _ := range *batch {
+	for k := range *batch {
 		CBoardIndexCache = append(CBoardIndexCache, (*batch)[k])
 	}
 	// if len(*batch) == 0 {
@@ -1145,7 +1146,7 @@ func (batch *CBoardBatch) IndexForSearch() {
 
 func (batch *CBoardBatch) Insert(cboards []CompiledBoard) {
 	toBeIndexed := CBoardBatch{}
-	for k, _ := range cboards {
+	for k := range cboards {
 		i := batch.Find(cboards[k].Fingerprint)
 		if i != -1 {
 			// Trigger insert. It'll only update if the lastupdate is newer.
@@ -1162,7 +1163,7 @@ func (batch *CBoardBatch) Insert(cboards []CompiledBoard) {
 
 func (batch *CBoardBatch) InsertFromProtobuf(cboards []*pbstructs.Board) {
 	toBeIndexed := CBoardBatch{}
-	for k, _ := range cboards {
+	for k := range cboards {
 		if cboards[k] == nil {
 			continue
 		}
@@ -1181,7 +1182,7 @@ func (batch *CBoardBatch) InsertFromProtobuf(cboards []*pbstructs.Board) {
 }
 
 func (batch *CBoardBatch) Find(boardfp string) int {
-	for k, _ := range *batch {
+	for k := range *batch {
 		if boardfp == (*batch)[k].Fingerprint {
 			return k
 		}
@@ -1190,14 +1191,14 @@ func (batch *CBoardBatch) Find(boardfp string) int {
 }
 
 func (batch *CBoardBatch) Refresh(catds *CATDBatch, cfgs *CFGBatch, cmas *CMABatch, boardSpecificUserHeaders CUserBatch, nowts int64, bc *BoardCarrier) {
-	for k, _ := range *batch {
+	for k := range *batch {
 		(*batch)[k].Refresh(catds, cfgs, cmas, boardSpecificUserHeaders, nowts, bc)
 	}
 }
 
 func (batch *CBoardBatch) GetDefaultMods() []string {
 	var dms []string
-	for k, _ := range *batch {
+	for k := range *batch {
 		dms = append(dms, (*batch)[k].GetDefaultMods()...)
 	}
 	return dms
@@ -1205,7 +1206,7 @@ func (batch *CBoardBatch) GetDefaultMods() []string {
 
 func (batch *CBoardBatch) GetBoardSpecificUserHeaders() CUserBatch {
 	b := CUserBatch{}
-	for k, _ := range *batch {
+	for k := range *batch {
 		b = append(b, (*batch)[k].LocalScopeUserHeaders...)
 	}
 	return b
@@ -1443,7 +1444,7 @@ func parsePublicElectByNetwork(targetfp string, totalPop int, cpe CompiledPE) (e
 
 func parseFollowerCount(targetfp string, cpt CompiledPT) int {
 	var count int
-	for k, _ := range cpt.PTs {
+	for k := range cpt.PTs {
 		if cpt.PTs[k].Fingerprint == targetfp &&
 			cpt.PTs[k].Type == Signal_Follow {
 			count++
@@ -1453,7 +1454,7 @@ func parseFollowerCount(targetfp string, cpt CompiledPT) int {
 }
 
 func isF451Mod(targetfp string, cf451 CompiledF451) bool {
-	for k, _ := range cf451.F451s {
+	for k := range cf451.F451s {
 		if cf451.F451s[k].TargetFingerprint == targetfp && ca.IsTrustedCAKeyByFp(cf451.F451s[k].SourceFingerprint) {
 			return true
 		}
@@ -1462,7 +1463,7 @@ func isF451Mod(targetfp string, cf451 CompiledF451) bool {
 }
 
 func isModByDefault(targetfp string, localDefaultMods []string) bool {
-	for k, _ := range localDefaultMods {
+	for k := range localDefaultMods {
 		if localDefaultMods[k] == targetfp {
 			return true
 		}
@@ -1474,7 +1475,7 @@ func parseCanonicalName(ccn CompiledCN) (cname, cnamesource string) {
 	highestPrioritySourceKey := -1
 	highestPrioritySoFar := 0
 	highestPrioritySet := false
-	for k, _ := range ccn.CNs {
+	for k := range ccn.CNs {
 		isCaKey, priority := ca.IsTrustedCAKeyByFpWithPriority(
 			ccn.CNs[k].SourceFingerprint)
 		if isCaKey {
@@ -1574,7 +1575,7 @@ func (s *CompiledContentSignals) Insert(
 	if i2 != -1 {
 		cfg := (*cfgs)[i2]
 		expss := []ExplainedSignal{}
-		for k, _ := range cfg.FGs {
+		for k := range cfg.FGs {
 			expss = append(expss, cfg.FGs[k].CnvToExplainedSignal())
 			// if cfg.FGs[k].Self {
 			// 	s.SelfReported = true
@@ -1587,7 +1588,7 @@ func (s *CompiledContentSignals) Insert(
 	i3 := cmas.Find(targetfp)
 	if i3 != -1 {
 		cma := (*cmas)[i3]
-		for k, _ := range cma.MAs {
+		for k := range cma.MAs {
 			if cma.MAs[k].Type == Signal_ModBlock {
 				s.ModBlocks = append(
 					s.ModBlocks, cma.MAs[k].CnvToExplainedSignal())
@@ -1668,8 +1669,7 @@ func InitialiseKvStore() {
 /*----------  Reports tab entry  ----------*/
 
 /*
-	This is generated after the fact, after the core entities are compiled. It collects all the items with reports and puts them into a sortable payload form.
-
+This is generated after the fact, after the core entities are compiled. It collects all the items with reports and puts them into a sortable payload form.
 */
 type ReportsTabEntry struct {
 	Fingerprint   string
@@ -1705,7 +1705,7 @@ func NewReportsTabEntryFromPost(e *CompiledPost) *ReportsTabEntry {
 
 func getNewestReportTimestamp(c *CompiledContentSignals) int64 {
 	var newest int64
-	for k, _ := range c.Reports {
+	for k := range c.Reports {
 		if stamp := max(c.Reports[k].Creation, c.Reports[k].LastUpdate); stamp > newest {
 			newest = stamp
 		}
@@ -1720,8 +1720,7 @@ type ReportsTabEntryBatch []ReportsTabEntry
 =============================================*/
 
 /*
-	This is generated after the fact, after the core entities are compiled. It collects all the items with reports and puts them into a sortable payload form.
-
+This is generated after the fact, after the core entities are compiled. It collects all the items with reports and puts them into a sortable payload form.
 */
 type ModActionsTabEntry struct {
 	Fingerprint   string
@@ -1758,7 +1757,7 @@ func NewModActionsTabEntryFromPost(e *CompiledPost) *ModActionsTabEntry {
 // TODO handle modapprovals in the future as well, not just modblocks
 func getNewestModActionTimestamp(c *CompiledContentSignals) int64 {
 	var newest int64
-	for k, _ := range c.ModBlocks {
+	for k := range c.ModBlocks {
 		if stamp := max(c.ModBlocks[k].Creation, c.ModBlocks[k].LastUpdate); stamp > newest {
 			newest = stamp
 		}

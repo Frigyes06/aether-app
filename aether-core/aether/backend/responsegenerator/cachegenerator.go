@@ -7,6 +7,7 @@ import (
 	// "fmt"
 	"aether-core/aether/io/api"
 	"aether-core/aether/io/persistence"
+
 	// "aether-core/aether/services/configstore"
 	"aether-core/aether/backend/feapiconsumer"
 	"aether-core/aether/services/extverify"
@@ -17,11 +18,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+
 	// "github.com/davecgh/go-spew/spew"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
+
 	// "strings"
 	"time"
 )
@@ -151,9 +154,9 @@ func createResultCacheBlockForIndex(cacheData *CacheResponse) api.ResultCache {
 }
 
 /*
-	This deletion logic does three things:
-	1) Delete caches that have gone past the network head threshold
-	2) Delete caches that we do no longer carry in the index payload. (i.e. consolidated caches' non-consolidated old versions.) We do this trailing caches by one hour, to allow anyone that is still downloading from the cache to finish downloading.
+This deletion logic does three things:
+1) Delete caches that have gone past the network head threshold
+2) Delete caches that we do no longer carry in the index payload. (i.e. consolidated caches' non-consolidated old versions.) We do this trailing caches by one hour, to allow anyone that is still downloading from the cache to finish downloading.
 */
 func deleteTooOldCaches(etype string, cacheIndex *api.ApiResponse) {
 	logging.Logf(1, "DeleteTooOldCaches starts to run for Entity type: %v", etype)
@@ -193,7 +196,7 @@ func deleteTooOldCaches(etype string, cacheIndex *api.ApiResponse) {
 	}
 	// Now, we want to take a look at the folder structure, and see which ones need to go.
 	validsMap := make(map[string]bool)
-	for k, _ := range cacheIndex.Results {
+	for k := range cacheIndex.Results {
 		validsMap[cacheIndex.Results[k].ResponseUrl] = true
 	}
 	folders, err := ioutil.ReadDir(entityCacheDir)
@@ -201,7 +204,7 @@ func deleteTooOldCaches(etype string, cacheIndex *api.ApiResponse) {
 		logging.Logf(1, "deleteTooOldCaches had an error trying to read the cache directory. Dir: %v, Error: %v", entityCacheDir, err)
 		return
 	}
-	for k, _ := range folders {
+	for k := range folders {
 		cacheName := folders[k].Name()
 		if cacheName == "index.json" {
 			// This folder not only has cache folders. Avoid that one.

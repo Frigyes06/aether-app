@@ -7,6 +7,7 @@ import (
 	"aether-core/aether/services/toolbox"
 	"fmt"
 	"log"
+
 	// "github.com/davecgh/go-spew/spew"
 	"aether-core/aether/services/extverify"
 	// "log"
@@ -110,21 +111,21 @@ func (n *ConnectionRecord) hasHistoryOutboundLease() bool {
 func (n *Bouncer) indexOf(direction string, loc, subloc string, port uint16, inboundRev, outboundRev bool) int {
 	switch direction {
 	case "inbound":
-		for key, _ := range n.Inbounds {
+		for key := range n.Inbounds {
 			if n.Inbounds[key].equal(ConnectionRecord{Location: loc, Sublocation: subloc, Port: port, Inbound_ReverseConn: inboundRev, Outbound_ReverseConn: outboundRev}) {
 				return key
 			}
 		}
 		return -1
 	case "outbound":
-		for key, _ := range n.Outbounds {
+		for key := range n.Outbounds {
 			if n.Outbounds[key].equal(ConnectionRecord{Location: loc, Sublocation: subloc, Port: port, Inbound_ReverseConn: inboundRev, Outbound_ReverseConn: outboundRev}) {
 				return key
 			}
 		}
 		return -1
 	case "ping":
-		for key, _ := range n.Pings {
+		for key := range n.Pings {
 			if n.Pings[key].equal(ConnectionRecord{Location: loc, Sublocation: subloc, Port: port}) {
 				return key
 			}
@@ -402,13 +403,13 @@ func (b *Bouncer) GetLastInboundSyncTimestamp(onlyReverseConn bool) int64 {
 	b.flush()
 	ts := Timestamp(0)
 	if onlyReverseConn {
-		for key, _ := range b.Inbounds {
+		for key := range b.Inbounds {
 			if b.Inbounds[key].Inbound_ReverseConn &&
 				b.Inbounds[key].LastAccess > ts {
 				ts = b.Inbounds[key].LastAccess
 			}
 		}
-		for key, _ := range b.InboundHistory {
+		for key := range b.InboundHistory {
 			if b.InboundHistory[key].Inbound_ReverseConn &&
 				b.InboundHistory[key].LastAccess > ts {
 				ts = b.InboundHistory[key].LastAccess
@@ -416,12 +417,12 @@ func (b *Bouncer) GetLastInboundSyncTimestamp(onlyReverseConn bool) int64 {
 		}
 		return int64(ts)
 	}
-	for key, _ := range b.Inbounds {
+	for key := range b.Inbounds {
 		if b.Inbounds[key].LastAccess > ts {
 			ts = b.Inbounds[key].LastAccess
 		}
 	}
-	for key, _ := range b.InboundHistory {
+	for key := range b.InboundHistory {
 		if b.InboundHistory[key].LastAccess > ts {
 			ts = b.InboundHistory[key].LastAccess
 		}
@@ -435,13 +436,13 @@ func (b *Bouncer) GetLastOutboundSyncTimestamp(onlySuccessful bool) int64 {
 	b.flush()
 	ts := Timestamp(0)
 	if onlySuccessful {
-		for key, _ := range b.Outbounds {
+		for key := range b.Outbounds {
 			if b.Outbounds[key].Outbound_Successful &&
 				b.Outbounds[key].LastAccess > ts {
 				ts = b.Outbounds[key].LastAccess
 			}
 		}
-		for key, _ := range b.OutboundHistory {
+		for key := range b.OutboundHistory {
 			if b.OutboundHistory[key].Outbound_Successful &&
 				b.OutboundHistory[key].LastAccess > ts {
 				ts = b.OutboundHistory[key].LastAccess
@@ -449,12 +450,12 @@ func (b *Bouncer) GetLastOutboundSyncTimestamp(onlySuccessful bool) int64 {
 		}
 		return int64(ts)
 	}
-	for key, _ := range b.Outbounds {
+	for key := range b.Outbounds {
 		if b.Outbounds[key].LastAccess > ts {
 			ts = b.Outbounds[key].LastAccess
 		}
 	}
-	for key, _ := range b.OutboundHistory {
+	for key := range b.OutboundHistory {
 		if b.OutboundHistory[key].LastAccess > ts {
 			ts = b.OutboundHistory[key].LastAccess
 		}
@@ -467,7 +468,7 @@ func (b *Bouncer) GetLastPingTimestamp(onlySuccessful bool) int64 {
 	defer b.lock.Unlock()
 	b.flush()
 	ts := Timestamp(0)
-	for key, _ := range b.Pings {
+	for key := range b.Pings {
 		if b.Pings[key].LastAccess > ts {
 			ts = b.Pings[key].LastAccess
 		}
@@ -489,7 +490,7 @@ func (b *Bouncer) GetInboundsInLastXMinutes(min uint, onlySuccessful bool) []Con
 		- If looking for all, just all of them as gated by time limit
 	*/
 	if onlySuccessful {
-		for key, _ := range b.Inbounds {
+		for key := range b.Inbounds {
 			if b.Inbounds[key].LastAccess <= cutoff {
 				// If not within the X minutes we want, pass without further processing
 				continue
@@ -505,7 +506,7 @@ func (b *Bouncer) GetInboundsInLastXMinutes(min uint, onlySuccessful bool) []Con
 			}
 		}
 		// Same as above, repeated below over inbound history
-		for key, _ := range b.InboundHistory {
+		for key := range b.InboundHistory {
 			if b.InboundHistory[key].LastAccess <= cutoff {
 				// If not within the X minutes we want, pass without further processing
 				continue
@@ -523,12 +524,12 @@ func (b *Bouncer) GetInboundsInLastXMinutes(min uint, onlySuccessful bool) []Con
 		return results
 	}
 	// Not only successful, but all
-	for key, _ := range b.Inbounds {
+	for key := range b.Inbounds {
 		if b.Inbounds[key].LastAccess > cutoff {
 			results = append(results, b.Inbounds[key])
 		}
 	}
-	for key, _ := range b.InboundHistory {
+	for key := range b.InboundHistory {
 		if b.InboundHistory[key].LastAccess > cutoff {
 			results = append(results, b.InboundHistory[key])
 		}
@@ -543,13 +544,13 @@ func (b *Bouncer) GetOutboundsInLastXMinutes(min uint, onlySuccessful bool) []Co
 	cutoff := Timestamp(toolbox.CnvToCutoffMinutes(int(min)))
 	results := []ConnectionRecord{}
 	if onlySuccessful {
-		for key, _ := range b.Outbounds {
+		for key := range b.Outbounds {
 			if b.Outbounds[key].Outbound_Successful &&
 				b.Outbounds[key].LastAccess > cutoff {
 				results = append(results, b.Outbounds[key])
 			}
 		}
-		for key, _ := range b.OutboundHistory {
+		for key := range b.OutboundHistory {
 			if b.OutboundHistory[key].Outbound_Successful &&
 				b.OutboundHistory[key].LastAccess > cutoff {
 				results = append(results, b.OutboundHistory[key])
@@ -557,12 +558,12 @@ func (b *Bouncer) GetOutboundsInLastXMinutes(min uint, onlySuccessful bool) []Co
 		}
 		return results
 	}
-	for key, _ := range b.Outbounds {
+	for key := range b.Outbounds {
 		if b.Outbounds[key].LastAccess > cutoff {
 			results = append(results, b.Outbounds[key])
 		}
 	}
-	for key, _ := range b.OutboundHistory {
+	for key := range b.OutboundHistory {
 		if b.OutboundHistory[key].LastAccess > cutoff {
 			results = append(results, b.OutboundHistory[key])
 		}

@@ -8,9 +8,11 @@ import (
 	// "aether-core/aether/io/persistence"
 	"aether-core/aether/services/globals"
 	"aether-core/aether/services/logging"
+
 	// "aether-core/aether/services/safesleep"
 	"errors"
 	"fmt"
+
 	// "github.com/davecgh/go-spew/spew"
 	// "github.com/pkg/errors"
 	// "aether-core/aether/services/toolbox"
@@ -111,7 +113,7 @@ func Scout() error {
 		return errors.New("Scout got no unconnected addresses. Bailing.")
 	}
 	attempts := 0
-	for k, _ := range addrs {
+	for k := range addrs {
 		attempts++
 		if attempts > scoutAttempts {
 			break
@@ -259,7 +261,7 @@ func sameAddress(a1 *api.Address, a2 *api.Address) bool {
 func addrsInGivenSlice(addr *api.Address, slc *[]api.Address) bool {
 	address := *addr
 	slice := *slc
-	for i, _ := range slice {
+	for i := range slice {
 		if sameAddress(&address, &slice[i]) {
 			return true
 		}

@@ -195,7 +195,7 @@ func PushLocalUserAmbient() {
 		return
 	}
 	u := festructs.CompiledUser{}
-	for key, _ := range uh.Users {
+	for key := range uh.Users {
 		if uh.Users[key].Fingerprint == fp {
 			u = uh.Users[key]
 		}
@@ -234,7 +234,7 @@ func SendHomeView() {
 		return
 	}
 	thr := []*feobjects.CompiledThreadEntity{}
-	for k, _ := range hvc.Threads {
+	for k := range hvc.Threads {
 		thr = append(thr, hvc.Threads[k].Protobuf())
 	}
 	hvp := pb.HomeViewPayload{Threads: thr}
@@ -258,7 +258,7 @@ func SendPopularView() {
 		return
 	}
 	thr := []*feobjects.CompiledThreadEntity{}
-	for k, _ := range hvc.Threads {
+	for k := range hvc.Threads {
 		thr = append(thr, hvc.Threads[k].Protobuf())
 	}
 	hvp := pb.PopularViewPayload{Threads: thr}
@@ -282,7 +282,7 @@ func SendNewView() {
 		return
 	}
 	thrs := []*feobjects.CompiledThreadEntity{}
-	for k, _ := range nvc.Threads {
+	for k := range nvc.Threads {
 		protoEntity := nvc.Threads[k].Protobuf()
 		// Get board name for thread
 		ab := festructs.AmbientBoard{}
@@ -296,7 +296,7 @@ func SendNewView() {
 		thrs = append(thrs, protoEntity)
 	}
 	psts := []*feobjects.CompiledPostEntity{}
-	for k, _ := range nvc.Posts {
+	for k := range nvc.Posts {
 		protoEntity := nvc.Posts[k].Protobuf()
 		// Get board name for post
 		ab := festructs.AmbientBoard{}
@@ -434,7 +434,7 @@ func SendSearchResult(searchType, searchQuery string) {
 			logging.Logf(1, "This search errored out. Type: %v, Query: %v, Error: %v", searchType, searchQuery, err)
 		}
 		resp.Boards = r.Protobuf()
-		for k, _ := range resp.Boards {
+		for k := range resp.Boards {
 			subbed, notify, lastseen := globals.FrontendConfig.ContentRelations.IsSubbedBoard(resp.Boards[k].Fingerprint)
 			whitelisted := globals.FrontendConfig.ContentRelations.SFWList.IsSFWListedBoard(resp.Boards[k].Fingerprint)
 			resp.Boards[k].Subscribed = subbed
@@ -451,7 +451,7 @@ func SendSearchResult(searchType, searchQuery string) {
 		resp.Threads = threads.Protobuf()
 		resp.Posts = posts.Protobuf()
 		// Add whitelist data and board name, search score to the threads
-		for k, _ := range resp.Threads {
+		for k := range resp.Threads {
 			resp.Threads[k].ViewMeta_SFWListed = globals.FrontendConfig.ContentRelations.SFWList.IsSFWListedBoard(resp.Threads[k].Board)
 			ab := festructs.AmbientBoard{}
 			logging.Logf(3, "Single read happens in SendSearchResult>One>Thread>Board")
@@ -465,7 +465,7 @@ func SendSearchResult(searchType, searchQuery string) {
 		}
 
 		// Add whitelist data and scores to the posts
-		for k, _ := range resp.Posts {
+		for k := range resp.Posts {
 			resp.Posts[k].ViewMeta_SFWListed = globals.FrontendConfig.ContentRelations.SFWList.IsSFWListedBoard(resp.Posts[k].Board)
 			// Get board name
 			ab := festructs.AmbientBoard{}
@@ -494,7 +494,7 @@ func SendSearchResult(searchType, searchQuery string) {
 		}
 		resp.Users = r.Protobuf()
 		// Add whitelist data and scores to the posts
-		for k, _ := range resp.Users {
+		for k := range resp.Users {
 			resp.Users[k].ViewMeta_SearchScore = scoreMap[resp.Users[k].Fingerprint]
 		}
 	default:

@@ -12,9 +12,11 @@ import (
 	"aether-core/aether/services/globals"
 	"aether-core/aether/services/logging"
 	"aether-core/aether/services/randomhashgen"
+
 	// "encoding/json"
 	"errors"
 	"fmt"
+
 	// "github.com/davecgh/go-spew/spew"
 	// "io/ioutil"
 	// "os"
@@ -208,14 +210,14 @@ func GeneratePOSTResponse(respType string, req api.ApiResponse) ([]byte, error) 
 		indexes := createUnbakedIndexes(pages)
 		indexPages := splitEntitiesToPages(indexes)
 		indexApiResponse := convertResponsesToApiResponses(indexPages)
-		for key, _ := range *indexApiResponse {
+		for key := range *indexApiResponse {
 			(*indexApiResponse)[key].Endpoint = fmt.Sprintf("%s_index_post", (*indexApiResponse)[key].Entity)
 		}
 		// Generate manifest
 		manifest := createUnbakedManifests(pages)
 		manifestPages := splitManifestToPages(manifest)
 		manifestApiResponse := convertResponsesToApiResponses(manifestPages)
-		for key, _ := range *manifestApiResponse {
+		for key := range *manifestApiResponse {
 			(*manifestApiResponse)[key].Endpoint = "manifest_post"
 		}
 		// bakeFinalPOSTApiResponse wraps the data up and assigns proper metadata. It does not pull any further data in.
@@ -300,7 +302,7 @@ func insertIntoPOSTResponseReuseTracker(resultPage *api.ApiResponse, foldername 
 
 func generateResultCachesFromPostRespChain(chain []configstore.POSTResponseEntry) []api.ResultCache {
 	rcachs := []api.ResultCache{}
-	for i, _ := range chain {
+	for i := range chain {
 		rcachs = append(rcachs, constructResultCache(
 			api.Timestamp(chain[i].StartsFrom),
 			api.Timestamp(chain[i].EndsAt), chain[i].ResponseUrl))
