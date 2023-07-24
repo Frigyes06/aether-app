@@ -203,7 +203,7 @@ export default {
           {
             id: 'searchTerm',
             visibleName: '',
-            description: ``,
+            description: '',
             placeholder: 'Search communities',
             maxCharCount: 100,
             minCharCount: 1,
