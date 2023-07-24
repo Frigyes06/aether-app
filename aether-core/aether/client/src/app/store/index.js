@@ -5,7 +5,7 @@ This is the data store for the client.
 This data store does not hold any persistent data, nor does it cache it. The point of this is to hold the instance data. The frontend is the actual caching and compile logic that regenerates the data to be used as needed.
 */
 var __assign =
-  ( this?.__assign) ||
+  this?.__assign ||
   function () {
     __assign =
       Object.assign ||
