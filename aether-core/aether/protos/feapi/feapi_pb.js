@@ -9,7 +9,7 @@
 
 var jspb = require("google-protobuf");
 var goog = jspb;
-var global = Function("return this")();
+var global = function () { return this }();
 
 var feobjects_feobjects_pb = require("../feobjects/feobjects_pb.js");
 var mimapi_mimapi_pb = require("../mimapi/mimapi_pb.js");

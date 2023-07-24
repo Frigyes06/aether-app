@@ -9,7 +9,7 @@
 
 var jspb = require("google-protobuf");
 var goog = jspb;
-var global = Function("return this")();
+var global = function () { return this }();
 
 goog.exportSymbol("proto.feobjects.AmbientBoardEntity", null, global);
 goog.exportSymbol("proto.feobjects.BackendAmbientStatus", null, global);
