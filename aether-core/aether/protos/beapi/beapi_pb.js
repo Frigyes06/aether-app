@@ -9,7 +9,9 @@
 
 var jspb = require("google-protobuf");
 var goog = jspb;
-var global = Function("return this")();
+var global = (function () {
+  return this;
+})();
 
 var mimapi_mimapi_pb = require("../mimapi/mimapi_pb.js");
 goog.exportSymbol("proto.beapi.AccessRequest", null, global);
