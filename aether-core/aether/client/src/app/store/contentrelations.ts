@@ -86,7 +86,7 @@ let actions = {
 let mutations = {
   SAVE_BOARD_SIGNAL(state: any, payload: any) {
     // Find board in the store and change the state appropriately.
-    for (var i: number = 0; i < state.allBoards.length; i++) {
+    for (var i = 0; i < state.allBoards.length; i++) {
       ;(function (i: number) {
         if (state.allBoards[i].fingerprint === payload.fp) {
           if (typeof payload.subbed !== 'undefined') {

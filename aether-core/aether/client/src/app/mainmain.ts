@@ -74,7 +74,7 @@ function startAutoUpdateCheck() {
 // be closed automatically when the JavaScript object is garbage collected.
 let win: any
 let tray: any = null
-var DOM_READY: boolean = false
+var DOM_READY = false
 
 // Fix for enabling Windows notifications.
 if (process.platform === 'win32') {

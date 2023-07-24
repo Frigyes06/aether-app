@@ -5,7 +5,7 @@ export {}
 const { spawn } = require('child_process')
 const isDev = require('electron-is-dev')
 let globals = require('../globals/globals')
-let clientAPIServerIP: string = '127.0.0.1'
+let clientAPIServerIP = '127.0.0.1'
 let os = require('os')
 let path = require('path')
 
