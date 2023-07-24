@@ -9,7 +9,9 @@
 
 var jspb = require("google-protobuf");
 var goog = jspb;
-var global = function () { return this }();
+var global = (function () {
+  return this;
+})();
 
 goog.exportSymbol("proto.mimapi.Address", null, global);
 goog.exportSymbol("proto.mimapi.Board", null, global);
@@ -586,7 +588,7 @@ proto.mimapi.Board = function (opt_data) {
     0,
     -1,
     proto.mimapi.Board.repeatedFields_,
-    null
+    null,
   );
 };
 goog.inherits(proto.mimapi.Board, jspb.Message);
@@ -634,7 +636,7 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
         boardownersList: jspb.Message.toObjectList(
           msg.getBoardownersList(),
           proto.mimapi.BoardOwner.toObject,
-          includeInstance
+          includeInstance,
         ),
         description: jspb.Message.getFieldWithDefault(msg, 4, ""),
         owner: jspb.Message.getFieldWithDefault(msg, 5, ""),
@@ -685,7 +687,7 @@ proto.mimapi.Board.deserializeBinaryFromReader = function (msg, reader) {
         var value = new proto.mimapi.Provable();
         reader.readMessage(
           value,
-          proto.mimapi.Provable.deserializeBinaryFromReader
+          proto.mimapi.Provable.deserializeBinaryFromReader,
         );
         msg.setProvable(value);
         break;
@@ -697,7 +699,7 @@ proto.mimapi.Board.deserializeBinaryFromReader = function (msg, reader) {
         var value = new proto.mimapi.BoardOwner();
         reader.readMessage(
           value,
-          proto.mimapi.BoardOwner.deserializeBinaryFromReader
+          proto.mimapi.BoardOwner.deserializeBinaryFromReader,
         );
         msg.addBoardowners(value);
         break;
@@ -737,7 +739,7 @@ proto.mimapi.Board.deserializeBinaryFromReader = function (msg, reader) {
         var value = new proto.mimapi.Updateable();
         reader.readMessage(
           value,
-          proto.mimapi.Updateable.deserializeBinaryFromReader
+          proto.mimapi.Updateable.deserializeBinaryFromReader,
         );
         msg.setUpdateable(value);
         break;
@@ -781,7 +783,7 @@ proto.mimapi.Board.serializeBinaryToWriter = function (message, writer) {
     writer.writeRepeatedMessage(
       3,
       f,
-      proto.mimapi.BoardOwner.serializeBinaryToWriter
+      proto.mimapi.BoardOwner.serializeBinaryToWriter,
     );
   }
   f = message.getDescription();
@@ -888,7 +890,7 @@ proto.mimapi.Board.prototype.addBoardowners = function (opt_value, opt_index) {
     3,
     opt_value,
     proto.mimapi.BoardOwner,
-    opt_index
+    opt_index,
   );
 };
 
@@ -1126,7 +1128,7 @@ proto.mimapi.Thread.deserializeBinaryFromReader = function (msg, reader) {
         var value = new proto.mimapi.Provable();
         reader.readMessage(
           value,
-          proto.mimapi.Provable.deserializeBinaryFromReader
+          proto.mimapi.Provable.deserializeBinaryFromReader,
         );
         msg.setProvable(value);
         break;
@@ -1174,7 +1176,7 @@ proto.mimapi.Thread.deserializeBinaryFromReader = function (msg, reader) {
         var value = new proto.mimapi.Updateable();
         reader.readMessage(
           value,
-          proto.mimapi.Updateable.deserializeBinaryFromReader
+          proto.mimapi.Updateable.deserializeBinaryFromReader,
         );
         msg.setUpdateable(value);
         break;
@@ -1538,7 +1540,7 @@ proto.mimapi.Post.deserializeBinaryFromReader = function (msg, reader) {
         var value = new proto.mimapi.Provable();
         reader.readMessage(
           value,
-          proto.mimapi.Provable.deserializeBinaryFromReader
+          proto.mimapi.Provable.deserializeBinaryFromReader,
         );
         msg.setProvable(value);
         break;
@@ -1586,7 +1588,7 @@ proto.mimapi.Post.deserializeBinaryFromReader = function (msg, reader) {
         var value = new proto.mimapi.Updateable();
         reader.readMessage(
           value,
-          proto.mimapi.Updateable.deserializeBinaryFromReader
+          proto.mimapi.Updateable.deserializeBinaryFromReader,
         );
         msg.setUpdateable(value);
         break;
@@ -1951,7 +1953,7 @@ proto.mimapi.Vote.deserializeBinaryFromReader = function (msg, reader) {
         var value = new proto.mimapi.Provable();
         reader.readMessage(
           value,
-          proto.mimapi.Provable.deserializeBinaryFromReader
+          proto.mimapi.Provable.deserializeBinaryFromReader,
         );
         msg.setProvable(value);
         break;
@@ -2003,7 +2005,7 @@ proto.mimapi.Vote.deserializeBinaryFromReader = function (msg, reader) {
         var value = new proto.mimapi.Updateable();
         reader.readMessage(
           value,
-          proto.mimapi.Updateable.deserializeBinaryFromReader
+          proto.mimapi.Updateable.deserializeBinaryFromReader,
         );
         msg.setUpdateable(value);
         break;
@@ -2383,7 +2385,7 @@ proto.mimapi.Key.deserializeBinaryFromReader = function (msg, reader) {
         var value = new proto.mimapi.Provable();
         reader.readMessage(
           value,
-          proto.mimapi.Provable.deserializeBinaryFromReader
+          proto.mimapi.Provable.deserializeBinaryFromReader,
         );
         msg.setProvable(value);
         break;
@@ -2427,7 +2429,7 @@ proto.mimapi.Key.deserializeBinaryFromReader = function (msg, reader) {
         var value = new proto.mimapi.Updateable();
         reader.readMessage(
           value,
-          proto.mimapi.Updateable.deserializeBinaryFromReader
+          proto.mimapi.Updateable.deserializeBinaryFromReader,
         );
         msg.setUpdateable(value);
         break;
@@ -2775,7 +2777,7 @@ proto.mimapi.Truststate.deserializeBinaryFromReader = function (msg, reader) {
         var value = new proto.mimapi.Provable();
         reader.readMessage(
           value,
-          proto.mimapi.Provable.deserializeBinaryFromReader
+          proto.mimapi.Provable.deserializeBinaryFromReader,
         );
         msg.setProvable(value);
         break;
@@ -2827,7 +2829,7 @@ proto.mimapi.Truststate.deserializeBinaryFromReader = function (msg, reader) {
         var value = new proto.mimapi.Updateable();
         reader.readMessage(
           value,
-          proto.mimapi.Updateable.deserializeBinaryFromReader
+          proto.mimapi.Updateable.deserializeBinaryFromReader,
         );
         msg.setUpdateable(value);
         break;
@@ -3230,7 +3232,7 @@ proto.mimapi.Address.deserializeBinaryFromReader = function (msg, reader) {
         var value = new proto.mimapi.Protocol();
         reader.readMessage(
           value,
-          proto.mimapi.Protocol.deserializeBinaryFromReader
+          proto.mimapi.Protocol.deserializeBinaryFromReader,
         );
         msg.setProtocol(value);
         break;
@@ -3238,7 +3240,7 @@ proto.mimapi.Address.deserializeBinaryFromReader = function (msg, reader) {
         var value = new proto.mimapi.Client();
         reader.readMessage(
           value,
-          proto.mimapi.Client.deserializeBinaryFromReader
+          proto.mimapi.Client.deserializeBinaryFromReader,
         );
         msg.setClient(value);
         break;
@@ -3494,7 +3496,7 @@ proto.mimapi.Subprotocol = function (opt_data) {
     0,
     -1,
     proto.mimapi.Subprotocol.repeatedFields_,
-    null
+    null,
   );
 };
 goog.inherits(proto.mimapi.Subprotocol, jspb.Message);
@@ -3694,7 +3696,7 @@ proto.mimapi.Subprotocol.prototype.setSupportedentitiesList = function (value) {
  */
 proto.mimapi.Subprotocol.prototype.addSupportedentities = function (
   value,
-  opt_index
+  opt_index,
 ) {
   jspb.Message.addToRepeatedField(this, 4, value, opt_index);
 };
@@ -3720,7 +3722,7 @@ proto.mimapi.Protocol = function (opt_data) {
     0,
     -1,
     proto.mimapi.Protocol.repeatedFields_,
-    null
+    null,
   );
 };
 goog.inherits(proto.mimapi.Protocol, jspb.Message);
@@ -3766,7 +3768,7 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
         subprotocolsList: jspb.Message.toObjectList(
           msg.getSubprotocolsList(),
           proto.mimapi.Subprotocol.toObject,
-          includeInstance
+          includeInstance,
         ),
       };
 
@@ -3814,7 +3816,7 @@ proto.mimapi.Protocol.deserializeBinaryFromReader = function (msg, reader) {
         var value = new proto.mimapi.Subprotocol();
         reader.readMessage(
           value,
-          proto.mimapi.Subprotocol.deserializeBinaryFromReader
+          proto.mimapi.Subprotocol.deserializeBinaryFromReader,
         );
         msg.addSubprotocols(value);
         break;
@@ -3858,7 +3860,7 @@ proto.mimapi.Protocol.serializeBinaryToWriter = function (message, writer) {
     writer.writeRepeatedMessage(
       3,
       f,
-      proto.mimapi.Subprotocol.serializeBinaryToWriter
+      proto.mimapi.Subprotocol.serializeBinaryToWriter,
     );
   }
 };
@@ -3911,14 +3913,14 @@ proto.mimapi.Protocol.prototype.setSubprotocolsList = function (value) {
  */
 proto.mimapi.Protocol.prototype.addSubprotocols = function (
   opt_value,
-  opt_index
+  opt_index,
 ) {
   return jspb.Message.addToRepeatedWrapperField(
     this,
     3,
     opt_value,
     proto.mimapi.Subprotocol,
-    opt_index
+    opt_index,
   );
 };
 
