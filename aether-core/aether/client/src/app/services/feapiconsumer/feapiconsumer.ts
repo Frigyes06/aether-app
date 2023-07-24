@@ -23,8 +23,8 @@ var proto = require('../../../../../protos/feapi/feapi_grpc_pb')
 
 let feAPIConsumer: any
 let Initialised: boolean
-let initInProgress: boolean = false
-let clientApiServerPortIsSet: boolean = false
+let initInProgress = false
+let clientApiServerPortIsSet = false
 
 function timeout(ms: any) {
   return new Promise(function (resolve) {
