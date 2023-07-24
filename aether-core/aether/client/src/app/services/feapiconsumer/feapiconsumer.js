@@ -231,7 +231,7 @@ var ExportedMethods = {
             case 0:
               console.log('get all boards is making a call')
               console.log('initstate: ', Initialised)
-              if (!!Initialised) return [3 /*break*/, 2]
+              if (Initialised) return [3 /*break*/, 2]
               return [4 /*yield*/, ExportedMethods.Initialise()]
             case 1:
               _a.sent()
@@ -285,7 +285,7 @@ var ExportedMethods = {
         return __generator(this, function (_a) {
           switch (_a.label) {
             case 0:
-              if (!!Initialised) return [3 /*break*/, 2]
+              if (Initialised) return [3 /*break*/, 2]
               return [4 /*yield*/, ExportedMethods.Initialise()]
             case 1:
               _a.sent()
@@ -318,7 +318,7 @@ var ExportedMethods = {
         return __generator(this, function (_a) {
           switch (_a.label) {
             case 0:
-              if (!!Initialised) return [3 /*break*/, 2]
+              if (Initialised) return [3 /*break*/, 2]
               return [4 /*yield*/, ExportedMethods.Initialise()]
             case 1:
               _a.sent()
@@ -355,7 +355,7 @@ var ExportedMethods = {
         return __generator(this, function (_a) {
           switch (_a.label) {
             case 0:
-              if (!!Initialised) return [3 /*break*/, 2]
+              if (Initialised) return [3 /*break*/, 2]
               return [4 /*yield*/, ExportedMethods.Initialise()]
             case 1:
               _a.sent()
@@ -395,7 +395,7 @@ var ExportedMethods = {
         return __generator(this, function (_a) {
           switch (_a.label) {
             case 0:
-              if (!!Initialised) return [3 /*break*/, 2]
+              if (Initialised) return [3 /*break*/, 2]
               return [4 /*yield*/, ExportedMethods.Initialise()]
             case 1:
               _a.sent()
@@ -437,7 +437,7 @@ var ExportedMethods = {
         return __generator(this, function (_a) {
           switch (_a.label) {
             case 0:
-              if (!!Initialised) return [3 /*break*/, 2]
+              if (Initialised) return [3 /*break*/, 2]
               return [4 /*yield*/, ExportedMethods.Initialise()]
             case 1:
               _a.sent()
@@ -495,7 +495,7 @@ var ExportedMethods = {
         return __generator(this, function (_a) {
           switch (_a.label) {
             case 0:
-              if (!!Initialised) return [3 /*break*/, 2]
+              if (Initialised) return [3 /*break*/, 2]
               return [4 /*yield*/, ExportedMethods.Initialise()]
             case 1:
               _a.sent()
@@ -526,7 +526,7 @@ var ExportedMethods = {
         return __generator(this, function (_a) {
           switch (_a.label) {
             case 0:
-              if (!!Initialised) return [3 /*break*/, 2]
+              if (Initialised) return [3 /*break*/, 2]
               return [4 /*yield*/, ExportedMethods.Initialise()]
             case 1:
               _a.sent()
@@ -554,7 +554,7 @@ var ExportedMethods = {
         return __generator(this, function (_a) {
           switch (_a.label) {
             case 0:
-              if (!!Initialised) return [3 /*break*/, 2]
+              if (Initialised) return [3 /*break*/, 2]
               return [4 /*yield*/, ExportedMethods.Initialise()]
             case 1:
               _a.sent()
@@ -585,7 +585,7 @@ var ExportedMethods = {
         return __generator(this, function (_a) {
           switch (_a.label) {
             case 0:
-              if (!!Initialised) return [3 /*break*/, 2]
+              if (Initialised) return [3 /*break*/, 2]
               return [4 /*yield*/, ExportedMethods.Initialise()]
             case 1:
               _a.sent()
@@ -616,7 +616,7 @@ var ExportedMethods = {
         return __generator(this, function (_a) {
           switch (_a.label) {
             case 0:
-              if (!!Initialised) return [3 /*break*/, 2]
+              if (Initialised) return [3 /*break*/, 2]
               return [4 /*yield*/, ExportedMethods.Initialise()]
             case 1:
               _a.sent()
@@ -650,7 +650,7 @@ var ExportedMethods = {
         return __generator(this, function (_a) {
           switch (_a.label) {
             case 0:
-              if (!!Initialised) return [3 /*break*/, 2]
+              if (Initialised) return [3 /*break*/, 2]
               return [4 /*yield*/, ExportedMethods.Initialise()]
             case 1:
               _a.sent()
@@ -684,7 +684,7 @@ var ExportedMethods = {
         return __generator(this, function (_a) {
           switch (_a.label) {
             case 0:
-              if (!!Initialised) return [3 /*break*/, 2]
+              if (Initialised) return [3 /*break*/, 2]
               return [4 /*yield*/, ExportedMethods.Initialise()]
             case 1:
               _a.sent()
@@ -718,7 +718,7 @@ var ExportedMethods = {
         return __generator(this, function (_a) {
           switch (_a.label) {
             case 0:
-              if (!!Initialised) return [3 /*break*/, 2]
+              if (Initialised) return [3 /*break*/, 2]
               return [4 /*yield*/, ExportedMethods.Initialise()]
             case 1:
               _a.sent()
@@ -752,7 +752,7 @@ var ExportedMethods = {
         return __generator(this, function (_a) {
           switch (_a.label) {
             case 0:
-              if (!!Initialised) return [3 /*break*/, 2]
+              if (Initialised) return [3 /*break*/, 2]
               return [4 /*yield*/, ExportedMethods.Initialise()]
             case 1:
               _a.sent()
@@ -815,7 +815,7 @@ var ExportedMethods = {
         return __generator(this, function (_a) {
           switch (_a.label) {
             case 0:
-              if (!!Initialised) return [3 /*break*/, 2]
+              if (Initialised) return [3 /*break*/, 2]
               return [4 /*yield*/, ExportedMethods.Initialise()]
             case 1:
               _a.sent()
@@ -1044,7 +1044,7 @@ var ExportedMethods = {
         return __generator(this, function (_a) {
           switch (_a.label) {
             case 0:
-              if (!!Initialised) return [3 /*break*/, 2]
+              if (Initialised) return [3 /*break*/, 2]
               return [4 /*yield*/, ExportedMethods.Initialise()]
             case 1:
               _a.sent()
@@ -1159,7 +1159,7 @@ var ExportedMethods = {
         return __generator(this, function (_a) {
           switch (_a.label) {
             case 0:
-              if (!!Initialised) return [3 /*break*/, 2]
+              if (Initialised) return [3 /*break*/, 2]
               return [4 /*yield*/, ExportedMethods.Initialise()]
             case 1:
               _a.sent()
@@ -1217,7 +1217,7 @@ var ExportedMethods = {
         return __generator(this, function (_a) {
           switch (_a.label) {
             case 0:
-              if (!!Initialised) return [3 /*break*/, 2]
+              if (Initialised) return [3 /*break*/, 2]
               return [4 /*yield*/, ExportedMethods.Initialise()]
             case 1:
               _a.sent()
