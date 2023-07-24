@@ -574,7 +574,7 @@ proto.beapi.Filters.prototype.setLastreftimerange = function (value) {
 };
 
 proto.beapi.Filters.prototype.clearLastreftimerange = function () {
-  this.setLastreftimerange(undefined);
+  this.setLastreftimerange();
 };
 
 /**
@@ -601,7 +601,7 @@ proto.beapi.Filters.prototype.setFingerprints = function (value) {
 };
 
 proto.beapi.Filters.prototype.clearFingerprints = function () {
-  this.setFingerprints(undefined);
+  this.setFingerprints();
 };
 
 /**
@@ -628,7 +628,7 @@ proto.beapi.Filters.prototype.setTypefilters = function (value) {
 };
 
 proto.beapi.Filters.prototype.clearTypefilters = function () {
-  this.setTypefilters(undefined);
+  this.setTypefilters();
 };
 
 /**
@@ -655,7 +655,7 @@ proto.beapi.Filters.prototype.setGraphfilters = function (value) {
 };
 
 proto.beapi.Filters.prototype.clearGraphfilters = function () {
-  this.setGraphfilters(undefined);
+  this.setGraphfilters();
 };
 
 /**
@@ -1603,7 +1603,7 @@ proto.beapi.AccessRequest.prototype.setRequesterid = function (value) {
 };
 
 proto.beapi.AccessRequest.prototype.clearRequesterid = function () {
-  this.setRequesterid(undefined);
+  this.setRequesterid();
 };
 
 /**
@@ -1770,7 +1770,7 @@ proto.beapi.AccessResponse.prototype.setStatus = function (value) {
 };
 
 proto.beapi.AccessResponse.prototype.clearStatus = function () {
-  this.setStatus(undefined);
+  this.setStatus();
 };
 
 /**
@@ -1950,7 +1950,7 @@ proto.beapi.BoardsRequest.prototype.setRequesterid = function (value) {
 };
 
 proto.beapi.BoardsRequest.prototype.clearRequesterid = function () {
-  this.setRequesterid(undefined);
+  this.setRequesterid();
 };
 
 /**
@@ -1977,7 +1977,7 @@ proto.beapi.BoardsRequest.prototype.setFilters = function (value) {
 };
 
 proto.beapi.BoardsRequest.prototype.clearFilters = function () {
-  this.setFilters(undefined);
+  this.setFilters();
 };
 
 /**
@@ -2169,7 +2169,7 @@ proto.beapi.BoardsResponse.prototype.setStatus = function (value) {
 };
 
 proto.beapi.BoardsResponse.prototype.clearStatus = function () {
-  this.setStatus(undefined);
+  this.setStatus();
 };
 
 /**
@@ -2379,7 +2379,7 @@ proto.beapi.ThreadsRequest.prototype.setRequesterid = function (value) {
 };
 
 proto.beapi.ThreadsRequest.prototype.clearRequesterid = function () {
-  this.setRequesterid(undefined);
+  this.setRequesterid();
 };
 
 /**
@@ -2406,7 +2406,7 @@ proto.beapi.ThreadsRequest.prototype.setFilters = function (value) {
 };
 
 proto.beapi.ThreadsRequest.prototype.clearFilters = function () {
-  this.setFilters(undefined);
+  this.setFilters();
 };
 
 /**
@@ -2598,7 +2598,7 @@ proto.beapi.ThreadsResponse.prototype.setStatus = function (value) {
 };
 
 proto.beapi.ThreadsResponse.prototype.clearStatus = function () {
-  this.setStatus(undefined);
+  this.setStatus();
 };
 
 /**
@@ -2800,7 +2800,7 @@ proto.beapi.PostsRequest.prototype.setRequesterid = function (value) {
 };
 
 proto.beapi.PostsRequest.prototype.clearRequesterid = function () {
-  this.setRequesterid(undefined);
+  this.setRequesterid();
 };
 
 /**
@@ -2827,7 +2827,7 @@ proto.beapi.PostsRequest.prototype.setFilters = function (value) {
 };
 
 proto.beapi.PostsRequest.prototype.clearFilters = function () {
-  this.setFilters(undefined);
+  this.setFilters();
 };
 
 /**
@@ -3013,7 +3013,7 @@ proto.beapi.PostsResponse.prototype.setStatus = function (value) {
 };
 
 proto.beapi.PostsResponse.prototype.clearStatus = function () {
-  this.setStatus(undefined);
+  this.setStatus();
 };
 
 /**
@@ -3212,7 +3212,7 @@ proto.beapi.VotesRequest.prototype.setRequesterid = function (value) {
 };
 
 proto.beapi.VotesRequest.prototype.clearRequesterid = function () {
-  this.setRequesterid(undefined);
+  this.setRequesterid();
 };
 
 /**
@@ -3239,7 +3239,7 @@ proto.beapi.VotesRequest.prototype.setFilters = function (value) {
 };
 
 proto.beapi.VotesRequest.prototype.clearFilters = function () {
-  this.setFilters(undefined);
+  this.setFilters();
 };
 
 /**
@@ -3425,7 +3425,7 @@ proto.beapi.VotesResponse.prototype.setStatus = function (value) {
 };
 
 proto.beapi.VotesResponse.prototype.clearStatus = function () {
-  this.setStatus(undefined);
+  this.setStatus();
 };
 
 /**
@@ -3624,7 +3624,7 @@ proto.beapi.KeysRequest.prototype.setRequesterid = function (value) {
 };
 
 proto.beapi.KeysRequest.prototype.clearRequesterid = function () {
-  this.setRequesterid(undefined);
+  this.setRequesterid();
 };
 
 /**
@@ -3651,7 +3651,7 @@ proto.beapi.KeysRequest.prototype.setFilters = function (value) {
 };
 
 proto.beapi.KeysRequest.prototype.clearFilters = function () {
-  this.setFilters(undefined);
+  this.setFilters();
 };
 
 /**
@@ -3835,7 +3835,7 @@ proto.beapi.KeysResponse.prototype.setStatus = function (value) {
 };
 
 proto.beapi.KeysResponse.prototype.clearStatus = function () {
-  this.setStatus(undefined);
+  this.setStatus();
 };
 
 /**
@@ -4045,7 +4045,7 @@ proto.beapi.TruststatesRequest.prototype.setRequesterid = function (value) {
 };
 
 proto.beapi.TruststatesRequest.prototype.clearRequesterid = function () {
-  this.setRequesterid(undefined);
+  this.setRequesterid();
 };
 
 /**
@@ -4072,7 +4072,7 @@ proto.beapi.TruststatesRequest.prototype.setFilters = function (value) {
 };
 
 proto.beapi.TruststatesRequest.prototype.clearFilters = function () {
-  this.setFilters(undefined);
+  this.setFilters();
 };
 
 /**
@@ -4268,7 +4268,7 @@ proto.beapi.TruststatesResponse.prototype.setStatus = function (value) {
 };
 
 proto.beapi.TruststatesResponse.prototype.clearStatus = function () {
-  this.setStatus(undefined);
+  this.setStatus();
 };
 
 /**
@@ -4486,7 +4486,7 @@ proto.beapi.BoardThreadsCountRequest.prototype.setRequesterid = function (
 };
 
 proto.beapi.BoardThreadsCountRequest.prototype.clearRequesterid = function () {
-  this.setRequesterid(undefined);
+  this.setRequesterid();
 };
 
 /**
@@ -4678,7 +4678,7 @@ proto.beapi.BoardThreadsCountResponse.prototype.setStatus = function (value) {
 };
 
 proto.beapi.BoardThreadsCountResponse.prototype.clearStatus = function () {
-  this.setStatus(undefined);
+  this.setStatus();
 };
 
 /**
@@ -4870,7 +4870,7 @@ proto.beapi.ThreadPostsCountRequest.prototype.setRequesterid = function (
 };
 
 proto.beapi.ThreadPostsCountRequest.prototype.clearRequesterid = function () {
-  this.setRequesterid(undefined);
+  this.setRequesterid();
 };
 
 /**
@@ -5062,7 +5062,7 @@ proto.beapi.ThreadPostsCountResponse.prototype.setStatus = function (value) {
 };
 
 proto.beapi.ThreadPostsCountResponse.prototype.clearStatus = function () {
-  this.setStatus(undefined);
+  this.setStatus();
 };
 
 /**
@@ -5397,7 +5397,7 @@ proto.beapi.MintedContentPayload.prototype.setRequesterid = function (value) {
 };
 
 proto.beapi.MintedContentPayload.prototype.clearRequesterid = function () {
-  this.setRequesterid(undefined);
+  this.setRequesterid();
 };
 
 /**
@@ -5823,7 +5823,7 @@ proto.beapi.MintedContentResponse.prototype.setStatus = function (value) {
 };
 
 proto.beapi.MintedContentResponse.prototype.clearStatus = function () {
-  this.setStatus(undefined);
+  this.setStatus();
 };
 
 /**
@@ -6006,7 +6006,7 @@ proto.beapi.ConnectToRemoteRequest.prototype.setRequesterid = function (value) {
 };
 
 proto.beapi.ConnectToRemoteRequest.prototype.clearRequesterid = function () {
-  this.setRequesterid(undefined);
+  this.setRequesterid();
 };
 
 /**
@@ -6033,7 +6033,7 @@ proto.beapi.ConnectToRemoteRequest.prototype.setAddress = function (value) {
 };
 
 proto.beapi.ConnectToRemoteRequest.prototype.clearAddress = function () {
-  this.setAddress(undefined);
+  this.setAddress();
 };
 
 /**
@@ -6201,7 +6201,7 @@ proto.beapi.ConnectToRemoteResponse.prototype.setStatus = function (value) {
 };
 
 proto.beapi.ConnectToRemoteResponse.prototype.clearStatus = function () {
-  this.setStatus(undefined);
+  this.setStatus();
 };
 
 /**

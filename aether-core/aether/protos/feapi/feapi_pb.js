@@ -1330,7 +1330,7 @@ proto.feapi.ThreadAndPostsResponse.prototype.setBoard = function (value) {
 };
 
 proto.feapi.ThreadAndPostsResponse.prototype.clearBoard = function () {
-  this.setBoard(undefined);
+  this.setBoard();
 };
 
 /**
@@ -1361,7 +1361,7 @@ proto.feapi.ThreadAndPostsResponse.prototype.setThread = function (value) {
 };
 
 proto.feapi.ThreadAndPostsResponse.prototype.clearThread = function () {
-  this.setThread(undefined);
+  this.setThread();
 };
 
 /**
@@ -1795,7 +1795,7 @@ proto.feapi.BoardAndThreadsResponse.prototype.setBoard = function (value) {
 };
 
 proto.feapi.BoardAndThreadsResponse.prototype.clearBoard = function () {
-  this.setBoard(undefined);
+  this.setBoard();
 };
 
 /**
@@ -2767,7 +2767,7 @@ proto.feapi.UserAndGraphResponse.prototype.setUser = function (value) {
 };
 
 proto.feapi.UserAndGraphResponse.prototype.clearUser = function () {
-  this.setUser(undefined);
+  this.setUser();
 };
 
 /**
@@ -3389,7 +3389,7 @@ proto.feapi.ContentEventPayload.prototype.setEvent = function (value) {
 };
 
 proto.feapi.ContentEventPayload.prototype.clearEvent = function () {
-  this.setEvent(undefined);
+  this.setEvent();
 };
 
 /**
@@ -3416,7 +3416,7 @@ proto.feapi.ContentEventPayload.prototype.setBoarddata = function (value) {
 };
 
 proto.feapi.ContentEventPayload.prototype.clearBoarddata = function () {
-  this.setBoarddata(undefined);
+  this.setBoarddata();
 };
 
 /**
@@ -3443,7 +3443,7 @@ proto.feapi.ContentEventPayload.prototype.setThreaddata = function (value) {
 };
 
 proto.feapi.ContentEventPayload.prototype.clearThreaddata = function () {
-  this.setThreaddata(undefined);
+  this.setThreaddata();
 };
 
 /**
@@ -3470,7 +3470,7 @@ proto.feapi.ContentEventPayload.prototype.setPostdata = function (value) {
 };
 
 proto.feapi.ContentEventPayload.prototype.clearPostdata = function () {
-  this.setPostdata(undefined);
+  this.setPostdata();
 };
 
 /**
@@ -3497,7 +3497,7 @@ proto.feapi.ContentEventPayload.prototype.setKeydata = function (value) {
 };
 
 proto.feapi.ContentEventPayload.prototype.clearKeydata = function () {
-  this.setKeydata(undefined);
+  this.setKeydata();
 };
 
 /**
@@ -3871,7 +3871,7 @@ proto.feapi.SignalEventPayload.prototype.setEvent = function (value) {
 };
 
 proto.feapi.SignalEventPayload.prototype.clearEvent = function () {
-  this.setEvent(undefined);
+  this.setEvent();
 };
 
 /**
@@ -5378,7 +5378,7 @@ proto.feapi.BackendAmbientStatusPayload.prototype.setBackendambientstatus =
 
 proto.feapi.BackendAmbientStatusPayload.prototype.clearBackendambientstatus =
   function () {
-    this.setBackendambientstatus(undefined);
+    this.setBackendambientstatus();
   };
 
 /**
@@ -7461,7 +7461,7 @@ proto.feapi.SendAddressPayload.prototype.setAddress = function (value) {
 };
 
 proto.feapi.SendAddressPayload.prototype.clearAddress = function () {
-  this.setAddress(undefined);
+  this.setAddress();
 };
 
 /**
