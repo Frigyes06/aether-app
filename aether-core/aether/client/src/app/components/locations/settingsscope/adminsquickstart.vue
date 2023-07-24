@@ -19,7 +19,7 @@ export default {
 }
 // These are var's and not let's because lets are defined only from the point they're in the code, and vars are defined for the whole scope regardless of where they are.
 var headline = "# Admin's Quickstart"
-var intro = `**This is a quick introduction to founding your own community on Aether.**`
+var intro = "**This is a quick introduction to founding your own community on Aether.**"
 var content = `
 Thanks for being here! Aether is better because of you. The more communities with diverse views inhabiting this place, the more interesting, insightful, interesting it ends up being. We have space for cats, corgis, humans, motorcycles, \`\`\`python\`\`\`, pythons, cryptocurrencies, **Ć̢̘̳̺͉̯̘̣̠̂̓̔̓͗ͭ͊̿̿́͜ţ̛̫̗̱̗̖̬̱̜͖̬̐͊̌̃̀̅̒̋͛͝͡ͅh̷̤̦̝̟̜̓ͦͥ̿ͬ̐̔͘͜ụ̺̻͍̱̟̦͇̗̦̳̤͑̌͐̆̔͊ͧ̔̈͊̀͞l̸̴͔̣͚͇̯̭ͦ̋̈͌͊͂̇͂̚͟͝h̤̰͕͓̪͓͗ͭ̆̾ͮ̄ͪ͒́̆̉͊̍͜ͅͅȗ̸̮̦̦̣̠̝̫̹̟͈͇̯͚̏ͯ͂̎̚͞ͅ**, and anything in between.
 

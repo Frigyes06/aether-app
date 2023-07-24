@@ -23,7 +23,7 @@ export default {
   },
 }
 // These are var's and not let's because lets are defined only from the point they're in the code, and vars are defined for the whole scope regardless of where they are.
-var headline = `# A Beginner's Guide to the Galaxy`
+var headline = "# A Beginner's Guide to the Galaxy"
 var intro = `**(You don't have to read it in entirety, but it might be interesting)**
   `
 var content = `

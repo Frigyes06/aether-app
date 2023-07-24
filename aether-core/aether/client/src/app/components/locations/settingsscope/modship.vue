@@ -86,7 +86,7 @@ export default {
 }
 // These are var's and not let's because lets are defined only from the point they're in the code, and vars are defined for the whole scope regardless of where they are.
 var headline = '# Mod mode'
-var intro = `**This place allows you to set the mod mode, and tells about how moderation works in Aether.**`
+var intro = "**This place allows you to set the mod mode, and tells about how moderation works in Aether.**"
 var content1 = `
 * **Mod mode allows you to act as a mod.** You should enable this mode if you've created any communities, so you can moderate them.
 

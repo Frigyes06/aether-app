@@ -193,109 +193,109 @@ let crumbActions = {
     } else if (context.state.route.name === 'Intro') {
       updatedCrumbs.push({
         EntityType: '',
-        VisibleName: `A Beginner's Guide to the Galaxy`,
+        VisibleName: "A Beginner's Guide to the Galaxy",
         Link: 'intro',
         Fingerprint: '',
       })
     } else if (context.state.route.name === 'Settings') {
       updatedCrumbs.push({
         EntityType: '',
-        VisibleName: `Settings`,
+        VisibleName: "Settings",
         Link: 'settings',
         Fingerprint: '',
       })
     } else if (context.state.route.name === 'Settings>Defaults') {
       updatedCrumbs.push({
         EntityType: '',
-        VisibleName: `Settings`,
+        VisibleName: "Settings",
         Link: 'settings',
         Fingerprint: '',
       })
       updatedCrumbs.push({
         EntityType: '',
-        VisibleName: `Defaults`,
+        VisibleName: "Defaults",
         Link: 'settings/defaults',
         Fingerprint: '',
       })
     } else if (context.state.route.name === 'Settings>Shortcuts') {
       updatedCrumbs.push({
         EntityType: '',
-        VisibleName: `Settings`,
+        VisibleName: "Settings",
         Link: 'settings',
         Fingerprint: '',
       })
       updatedCrumbs.push({
         EntityType: '',
-        VisibleName: `Shortcuts`,
+        VisibleName: "Shortcuts",
         Link: 'settings/shortcuts',
         Fingerprint: '',
       })
     } else if (context.state.route.name === 'Settings>Advanced') {
       updatedCrumbs.push({
         EntityType: '',
-        VisibleName: `Settings`,
+        VisibleName: "Settings",
         Link: 'settings',
         Fingerprint: '',
       })
       updatedCrumbs.push({
         EntityType: '',
-        VisibleName: `Advanced`,
+        VisibleName: "Advanced",
         Link: 'settings/advanced',
         Fingerprint: '',
       })
     } else if (context.state.route.name === 'About') {
       updatedCrumbs.push({
         EntityType: '',
-        VisibleName: `About`,
+        VisibleName: "About",
         Link: 'about',
         Fingerprint: '',
       })
     } else if (context.state.route.name === 'Membership') {
       updatedCrumbs.push({
         EntityType: '',
-        VisibleName: `Membership`,
+        VisibleName: "Membership",
         Link: 'membership',
         Fingerprint: '',
       })
     } else if (context.state.route.name === 'Changelog') {
       updatedCrumbs.push({
         EntityType: '',
-        VisibleName: `Changelog`,
+        VisibleName: "Changelog",
         Link: 'changelog',
         Fingerprint: '',
       })
     } else if (context.state.route.name === 'AdminsQuickstart') {
       updatedCrumbs.push({
         EntityType: '',
-        VisibleName: `Admin's Quickstart`,
+        VisibleName: "Admin's Quickstart",
         Link: 'adminsquickstart',
         Fingerprint: '',
       })
     } else if (context.state.route.name === 'SFWList') {
       updatedCrumbs.push({
         EntityType: '',
-        VisibleName: `Safe-for-work list`,
+        VisibleName: "Safe-for-work list",
         Link: 'sfwlist',
         Fingerprint: '',
       })
     } else if (context.state.route.name === 'Modship') {
       updatedCrumbs.push({
         EntityType: '',
-        VisibleName: `Mod mode`,
+        VisibleName: "Mod mode",
         Link: 'modship',
         Fingerprint: '',
       })
     } else if (context.state.route.name === 'Namemint') {
       updatedCrumbs.push({
         EntityType: '',
-        VisibleName: `Name minter`,
+        VisibleName: "Name minter",
         Link: 'namemint',
         Fingerprint: '',
       })
     } else if (context.state.route.name === 'NewUser') {
       updatedCrumbs.push({
         EntityType: '',
-        VisibleName: `Create New User`,
+        VisibleName: "Create New User",
         Link: 'newuser',
         Fingerprint: '',
       })
