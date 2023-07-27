@@ -57,7 +57,7 @@ type POSTResponseRepo struct {
 
 // Internal helper functions
 
-// deleteFromDisk deletes the POST response from the directory. This only triggers when the item is also removed from the Responses repo.
+//deleteFromDisk deletes the POST response from the directory. This only triggers when the item is also removed from the Responses repo.
 func deleteFromDisk(url string) {
 	// postDir := fmt.Sprintf("%s/", bc.GetProtURLVersion(), "/responses/%s", bc.GetCachesDirectory(), url)
 	postDir := filepath.Join(bc.GetCachesDirectory(), bc.GetProtURLVersion(), "responses", url)
@@ -67,7 +67,7 @@ func deleteFromDisk(url string) {
 // collectCounts assumes there is only one type of entity - this function is internal to this library, do not use is elsewhere as that assumption won't hold anywhere else.
 func collectCounts(pres []POSTResponseEntry) EntityCount {
 	ec := EntityCount{}
-	for i := range pres {
+	for i, _ := range pres {
 		if i == 0 {
 			// [0] below because they will only have one. (Guaranteed in getLongestUniqueTimespan)
 			ec.Name = pres[i].EntityCounts[0].Name
@@ -96,7 +96,7 @@ func (e *POSTResponseEntry) eligible() bool {
 // Basic repo actions
 
 func (r *POSTResponseRepo) indexOf(url string) int {
-	for i := range r.Responses {
+	for i, _ := range r.Responses {
 		if r.Responses[i].ResponseUrl == url {
 			return i
 		}
@@ -141,7 +141,7 @@ func (r *POSTResponseRepo) flush(cutoff Timestamp) {
 func (r *POSTResponseRepo) getLongestUniqueTimespan(t Timestamp, entityName string) *POSTResponseEntry {
 	index := -1
 	longestDuration := Timestamp(0) // This starts from 0, which means we do not allow for the chain to start after the given timestamp. It has to start before.
-	for i := range r.Responses {
+	for i, _ := range r.Responses {
 		only1Ec := len(r.Responses[i].EntityCounts) == 1
 		entityNameMatches := r.Responses[i].EntityCounts[0].Name == entityName
 		hasEnoughTime := r.Responses[i].eligible()
@@ -172,8 +172,7 @@ func (r *POSTResponseRepo) GetPostResponseChain(start Timestamp, end Timestamp, 
 	defer r.lock.Unlock()
 	// fmt.Printf("This is all post responses available for chaining: %#v\n", r)
 	// return &[]POSTResponseEntry{}, Timestamp(0), Timestamp(0), EntityCount{}
-	var chain []POSTResponseEntry
-
+	chain := []POSTResponseEntry{}
 	linkStart := start
 	firstLinkStartsFrom := Timestamp(0)
 	lastLinkEndsAt := Timestamp(0)

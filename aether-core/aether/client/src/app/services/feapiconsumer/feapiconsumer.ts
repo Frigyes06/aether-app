@@ -7,7 +7,6 @@ export {} // This says this file is a module, not a script.
 // Imports
 const grpc = require('grpc')
 // const resolve = require('path').resolve
-var ipc = require('../../../../node_modules/electron-better-ipc')
 
 // Consts
 // const proto = grpc.load({
@@ -51,7 +50,7 @@ let ExportedMethods = {
     }
     initInProgress = true
     console.log('init is called')
-    let feapiport = await ipc.callMain('GetFrontendAPIPort')
+    let feapiport = await window.electronAPI.GetFrontendAPIPort()
     feAPIConsumer = new proto.FrontendAPIClient(
       '127.0.0.1:' + feapiport,
       grpc.credentials.createInsecure(),
@@ -61,9 +60,9 @@ let ExportedMethods = {
       }
     )
     console.log(feAPIConsumer)
-    let clapiserverport = await ipc.callMain('GetClientAPIServerPort')
+    let clapiserverport = await window.electronAPI.GetClientAPIServerPort()
     await ExportedMethods.SetClientAPIServerPort(clapiserverport)
-    ipc.callMain('SetFrontendClientConnInitialised', true)
+    window.electronAPI.SetFrontendClientConnInitialised(true)
     Initialised = true
     initInProgress = false
   },
@@ -953,8 +952,8 @@ let ExportedMethods = {
 module.exports = ExportedMethods
 
 function WaitUntilFrontendReady(cb: any): any {
-  async function check() {
-    let initialised = await ipc.callMain('GetFrontendClientConnInitialised')
+  async function check(): Promise<ReturnType<typeof setTimeout> | any> {
+    let initialised = await window.electronAPI.GetFrontendClientConnInitialised()
     // console.log(initialised)
     if (!initialised) {
       // console.log("Frontend still not ready, waiting a little more...")

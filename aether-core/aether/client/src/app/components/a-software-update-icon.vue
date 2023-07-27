@@ -14,7 +14,6 @@
 </template>
 
 <script lang="ts">
-var ipc = require('../../../node_modules/electron-better-ipc') // Register IPC caller
 var Tooltips = require('../services/tooltips/tooltips')
 export default {
   name: 'a-software-update-icon',
@@ -29,7 +28,7 @@ export default {
   },
   methods: {
     triggerUpdate(this: any) {
-      ipc.callMain('RestartToUpdateTheApp')
+      window.electronAPI.RestartToUpdateTheApp()
     },
   },
 }

@@ -11,11 +11,9 @@ import (
 	"aether-core/aether/services/create"
 	"aether-core/aether/services/globals"
 	"aether-core/aether/services/logging"
-
 	// "google.golang.org/grpc"
 	// "google.golang.org/grpc/reflection"
 	"fmt"
-
 	"golang.org/x/net/context"
 )
 
@@ -44,9 +42,8 @@ func (s *server) GetBoards(
 	if fps == nil {
 		fps = &pb.Fingerprints{}
 	}
-	var apiFps []api.Fingerprint
-
-	for key := range fps.Fingerprints {
+	apiFps := []api.Fingerprint{}
+	for key, _ := range fps.Fingerprints {
 		apiFps = append(apiFps, api.Fingerprint(fps.Fingerprints[key]))
 	}
 	apiStart := api.Timestamp(start)
@@ -58,7 +55,7 @@ func (s *server) GetBoards(
 		Board_Name:          req.GetFilters().GetGraphFilters().GetName(),
 	}
 	result, _ := persistence.Read("boards", apiFps, []string{}, apiStart, apiEnd, true, &opts)
-	for key := range result.Boards {
+	for key, _ := range result.Boards {
 		r := result.Boards[key].Protobuf()
 		resp.Boards = append(resp.Boards, &r)
 	}
@@ -77,9 +74,8 @@ func (s *server) GetThreads(
 	start := req.GetFilters().GetLastRefTimeRange().GetStart()
 	end := req.GetFilters().GetLastRefTimeRange().GetEnd()
 	fps := req.GetFilters().GetFingerprints().GetFingerprints()
-	var apiFps []api.Fingerprint
-
-	for key := range fps {
+	apiFps := []api.Fingerprint{}
+	for key, _ := range fps {
 		apiFps = append(apiFps, api.Fingerprint(fps[key]))
 	}
 	apiStart := api.Timestamp(start)
@@ -92,7 +88,7 @@ func (s *server) GetThreads(
 		AllProvables_Offset: int(req.GetFilters().GetGraphFilters().GetOffset()),
 	}
 	result, _ := persistence.Read("threads", apiFps, []string{}, apiStart, apiEnd, true, &opts)
-	for key := range result.Threads {
+	for key, _ := range result.Threads {
 		r := result.Threads[key].Protobuf()
 		resp.Threads = append(resp.Threads, &r)
 	}
@@ -111,9 +107,8 @@ func (s *server) GetPosts(
 	start := api.Timestamp(req.GetFilters().GetLastRefTimeRange().GetStart())
 	end := api.Timestamp(req.GetFilters().GetLastRefTimeRange().GetEnd())
 	fps := req.GetFilters().GetFingerprints().GetFingerprints()
-	var apiFps []api.Fingerprint
-
-	for key := range fps {
+	apiFps := []api.Fingerprint{}
+	for key, _ := range fps {
 		apiFps = append(apiFps, api.Fingerprint(fps[key]))
 	}
 	result, _ := persistence.Read("posts", apiFps, []string{}, start, end, true, &persistence.OptionalReadInputs{
@@ -124,7 +119,7 @@ func (s *server) GetPosts(
 		AllProvables_Limit:  int(req.GetFilters().GetGraphFilters().GetLimit()),
 		AllProvables_Offset: int(req.GetFilters().GetGraphFilters().GetOffset()),
 	})
-	for key := range result.Posts {
+	for key, _ := range result.Posts {
 		r := result.Posts[key].Protobuf()
 		resp.Posts = append(resp.Posts, &r)
 	}
@@ -143,9 +138,8 @@ func (s *server) GetVotes(
 	start := api.Timestamp(req.GetFilters().GetLastRefTimeRange().GetStart())
 	end := api.Timestamp(req.GetFilters().GetLastRefTimeRange().GetEnd())
 	fps := req.GetFilters().GetFingerprints().GetFingerprints()
-	var apiFps []api.Fingerprint
-
-	for key := range fps {
+	apiFps := []api.Fingerprint{}
+	for key, _ := range fps {
 		apiFps = append(apiFps, api.Fingerprint(fps[key]))
 	}
 	result, _ := persistence.Read("votes", apiFps, []string{}, start, end, true,
@@ -160,7 +154,7 @@ func (s *server) GetVotes(
 			AllProvables_Limit:  int(req.GetFilters().GetGraphFilters().GetLimit()),
 			AllProvables_Offset: int(req.GetFilters().GetGraphFilters().GetOffset()),
 		})
-	for key := range result.Votes {
+	for key, _ := range result.Votes {
 		r := result.Votes[key].Protobuf()
 		resp.Votes = append(resp.Votes, &r)
 	}
@@ -182,9 +176,8 @@ func (s *server) GetKeys(
 	if fps == nil {
 		fps = &pb.Fingerprints{}
 	}
-	var apiFps []api.Fingerprint
-
-	for key := range fps.Fingerprints {
+	apiFps := []api.Fingerprint{}
+	for key, _ := range fps.Fingerprints {
 		apiFps = append(apiFps, api.Fingerprint(fps.Fingerprints[key]))
 	}
 	apiStart := api.Timestamp(start)
@@ -196,7 +189,7 @@ func (s *server) GetKeys(
 		Key_Name:            req.GetFilters().GetGraphFilters().GetName(),
 	}
 	result, _ := persistence.Read("keys", apiFps, []string{}, apiStart, apiEnd, true, &opts)
-	for key := range result.Keys {
+	for key, _ := range result.Keys {
 		r := result.Keys[key].Protobuf()
 		resp.Keys = append(resp.Keys, &r)
 	}
@@ -215,9 +208,8 @@ func (s *server) GetTruststates(
 	start := api.Timestamp(req.GetFilters().GetLastRefTimeRange().GetStart())
 	end := api.Timestamp(req.GetFilters().GetLastRefTimeRange().GetEnd())
 	fps := req.GetFilters().GetFingerprints().GetFingerprints()
-	var apiFps []api.Fingerprint
-
-	for key := range fps {
+	apiFps := []api.Fingerprint{}
+	for key, _ := range fps {
 		apiFps = append(apiFps, api.Fingerprint(fps[key]))
 	}
 	result, _ := persistence.Read("truststates", apiFps, []string{}, start, end, true,
@@ -230,7 +222,7 @@ func (s *server) GetTruststates(
 			AllProvables_Limit:   int(req.GetFilters().GetGraphFilters().GetLimit()),
 			AllProvables_Offset:  int(req.GetFilters().GetGraphFilters().GetOffset()),
 		})
-	for key := range result.Truststates {
+	for key, _ := range result.Truststates {
 		r := result.Truststates[key].Protobuf()
 		resp.Truststates = append(resp.Truststates, &r)
 	}
@@ -298,10 +290,9 @@ func (s *server) SendMintedContent(
 		resp.Status.StatusCode = 401 // HTTP 401 Unauthorised
 		return &resp, nil
 	}
-	var allItems []interface{}
-
+	allItems := []interface{}{}
 	boardsProto := req.GetBoards()
-	for k := range boardsProto {
+	for k, _ := range boardsProto {
 		e := api.Board{}
 		e.FillFromProtobuf(*boardsProto[k])
 		err2 := api.Verify(api.Provable(&e))
@@ -313,7 +304,7 @@ func (s *server) SendMintedContent(
 		allItems = append(allItems, interface{}(e))
 	}
 	threadsProto := req.GetThreads()
-	for k := range threadsProto {
+	for k, _ := range threadsProto {
 		e := api.Thread{}
 		e.FillFromProtobuf(*threadsProto[k])
 		err2 := api.Verify(api.Provable(&e))
@@ -325,7 +316,7 @@ func (s *server) SendMintedContent(
 		allItems = append(allItems, interface{}(e))
 	}
 	postsProto := req.GetPosts()
-	for k := range postsProto {
+	for k, _ := range postsProto {
 		e := api.Post{}
 		e.FillFromProtobuf(*postsProto[k])
 		err2 := api.Verify(api.Provable(&e))
@@ -337,7 +328,7 @@ func (s *server) SendMintedContent(
 		allItems = append(allItems, interface{}(e))
 	}
 	votesProto := req.GetVotes()
-	for k := range votesProto {
+	for k, _ := range votesProto {
 		e := api.Vote{}
 		e.FillFromProtobuf(*votesProto[k])
 		err2 := api.Verify(api.Provable(&e))
@@ -349,7 +340,7 @@ func (s *server) SendMintedContent(
 		allItems = append(allItems, interface{}(e))
 	}
 	keysProto := req.GetKeys()
-	for k := range keysProto {
+	for k, _ := range keysProto {
 		e := api.Key{}
 		e.FillFromProtobuf(*keysProto[k])
 		err2 := api.Verify(api.Provable(&e))
@@ -361,7 +352,7 @@ func (s *server) SendMintedContent(
 		allItems = append(allItems, interface{}(e))
 	}
 	truststatesProto := req.GetTruststates()
-	for k := range truststatesProto {
+	for k, _ := range truststatesProto {
 		e := api.Truststate{}
 		e.FillFromProtobuf(*truststatesProto[k])
 		err2 := api.Verify(api.Provable(&e))

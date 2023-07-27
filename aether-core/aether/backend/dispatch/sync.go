@@ -12,16 +12,13 @@ import (
 	"aether-core/aether/services/logging"
 	"aether-core/aether/services/scheduling"
 	tb "aether-core/aether/services/toolbox"
-
 	// "aether-core/aether/services/verify"
 	"aether-core/aether/backend/metrics"
+	"errors"
 	"fmt"
-
 	// "github.com/davecgh/go-spew/spew"
-	"net"
-
 	"github.com/fatih/color"
-
+	"net"
 	// "strconv"
 	"strings"
 	"time"
@@ -114,7 +111,7 @@ func Sync(a api.Address, lineup []string, reverseConn *net.Conn) error {
 	allowed, releaseLease, renewLease := OutboundAllowed(a, reverseConn)
 	if !allowed {
 		logging.Logf(1, "Sync: Failed to secure an outbound lease. Addr: %#v, isReverseConn: %v", a, reverseConn != nil)
-		return fmt.Errorf("Sync: Failed to secure an outbound lease. Addr: %#v, isReverseConn: %v", a, reverseConn != nil)
+		return errors.New(fmt.Sprintf("Sync: Failed to secure an outbound lease. Addr: %#v, isReverseConn: %v", a, reverseConn != nil))
 	}
 
 	// Set the defer to release the lease when the sync is done, either via failure or success. (We set syncSuccessful to true when it's successfully completed.)
@@ -185,7 +182,7 @@ func Sync(a api.Address, lineup []string, reverseConn *net.Conn) error {
 		*/
 		errs := persistence.InsertOrUpdateAddresses(&addrs)
 		if len(errs) > 0 {
-			err := fmt.Errorf("Some errors were encountered when the Sync attempted InsertOrUpdateAddresses. Sync aborted. Errors: %s", errs)
+			err := errors.New(fmt.Sprintf("Some errors were encountered when the Sync attempted InsertOrUpdateAddresses. Sync aborted. Errors: %s", errs))
 			logging.Log(1, err)
 			abortClr := color.New(color.FgWhite, color.BgRed)
 			logging.Log(1, abortClr.Sprintf("SYNC ABORTED. Err: %s", err))
@@ -230,8 +227,7 @@ func Sync(a api.Address, lineup []string, reverseConn *net.Conn) error {
 		"truststates": n.TruststatesLastCheckin}
 	logging.Log(2, fmt.Sprintf("SYNC:PULL STARTED with data from node: %s:%d", a.Location, a.Port))
 	logging.Log(2, fmt.Sprintf("Endpoints: %#v", endpoints))
-	var ims []persistence.InsertMetrics
-
+	ims := []persistence.InsertMetrics{}
 	// callOrder := []string{"addresses", "votes", "truststates", "posts", "threads", "boards", "keys"}
 	callOrder := constructCallOrder(addr, lineup)
 	for _, endpointName := range callOrder {
@@ -433,7 +429,7 @@ func Sync(a api.Address, lineup []string, reverseConn *net.Conn) error {
 		addrs[0].LastSuccessfulSync = api.Timestamp(time.Now().Unix())
 		errs2 := persistence.InsertOrUpdateAddresses(&addrs)
 		if len(errs2) > 0 {
-			err := fmt.Errorf("Some errors were encountered when the Sync attempted InsertOrUpdateAddresses. Sync aborted. Errors: %s", errs2)
+			err := errors.New(fmt.Sprintf("Some errors were encountered when the Sync attempted InsertOrUpdateAddresses. Sync aborted. Errors: %s", errs2))
 			logging.Log(1, err)
 			abortClr := color.New(color.FgWhite, color.BgRed)
 			logging.Log(1, abortClr.Sprintf("SYNC ABORTED. Err: %s", err))
@@ -522,25 +518,25 @@ func constructCallOrder(remote api.Address, lineup []string) []string {
 func prepareForBatchInsert(r *api.Response) *[]interface{} {
 	resp := *r
 	var carrier []interface{}
-	for i := range resp.Boards {
+	for i, _ := range resp.Boards {
 		carrier = append(carrier, resp.Boards[i])
 	}
-	for i := range resp.Threads {
+	for i, _ := range resp.Threads {
 		carrier = append(carrier, resp.Threads[i])
 	}
-	for i := range resp.Posts {
+	for i, _ := range resp.Posts {
 		carrier = append(carrier, resp.Posts[i])
 	}
-	for i := range resp.Votes {
+	for i, _ := range resp.Votes {
 		carrier = append(carrier, resp.Votes[i])
 	}
-	for i := range resp.Keys {
+	for i, _ := range resp.Keys {
 		carrier = append(carrier, resp.Keys[i])
 	}
-	for i := range resp.Truststates {
+	for i, _ := range resp.Truststates {
 		carrier = append(carrier, resp.Truststates[i])
 	}
-	for i := range resp.Addresses {
+	for i, _ := range resp.Addresses {
 		carrier = append(carrier, resp.Addresses[i])
 	}
 	return &carrier

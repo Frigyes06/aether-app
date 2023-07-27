@@ -9,7 +9,6 @@ import (
 	"aether-core/aether/services/configstore"
 	"aether-core/aether/services/globals"
 	"aether-core/aether/services/logging"
-
 	// "github.com/davecgh/go-spew/spew"
 	"time"
 )
@@ -27,8 +26,7 @@ func getBootstrappers() []api.Address {
 		logging.Logf(1, "Getting bootstrappers failed from this address. Error: %v, Address: %v/%v:%v", err, bsLoc, bsSubloc, bsPort)
 	}
 	// spew.Dump(resp)
-	var bsers []api.Address
-
+	bsers := []api.Address{}
 	if resp.Address.Type == 254 || resp.Address.Type == 3 {
 		resp.Address.Location = bsLoc
 		resp.Address.Sublocation = bsSubloc
@@ -54,18 +52,16 @@ func constructExecPlans(bootstrappers []api.Address) []execPlan {
 	if len(bootstrappers) == 0 {
 		return []execPlan{}
 	}
-	var execplans []execPlan
-
-	for key := range bootstrappers {
+	execplans := []execPlan{}
+	for key, _ := range bootstrappers {
 		execplans = append(execplans, execPlan{addr: bootstrappers[key]})
 	}
 	servingSubprots := globals.BackendConfig.GetServingSubprotocols()
-	var entities []string
-
+	entities := []string{}
 	for _, subprot := range servingSubprots {
 		entities = append(entities, subprot.SupportedEntities...)
 	}
-	for key := range entities {
+	for key, _ := range entities {
 		mod := key % len(execplans) // 0 % 7 = 0, 3 % 7 = 3, 7 % 7 = 0 (loops over)
 		execplans[mod].endpoints = append(execplans[mod].endpoints, entities[key])
 	}
@@ -100,7 +96,7 @@ func doBootstrap() {
 			feapiconsumer.BackendAmbientStatus.LastBootstrapTimestamp = lastBs
 			feapiconsumer.BackendAmbientStatus.TriggerBootstrapRefresh = true
 			logging.Logf(1, "Bootstrap successful. Here are the bootstrappers that are about to be added to the exclusions list. %#v", onlineBootstrappers)
-			for k := range onlineBootstrappers {
+			for k, _ := range onlineBootstrappers {
 
 				dpe.Add(onlineBootstrappers[k])
 				// ^ If the bootstrap was successful, we mark all of them as hit.
@@ -117,10 +113,9 @@ func doBootstrap() {
 	logging.Logf(1, "Online bootstrappers: %#v", onlineBootstrappers)
 	execPlans := constructExecPlans(onlineBootstrappers)
 	// Do a partial sync for everything in the exec plan.
-	var errs []error
-
+	errs := []error{}
 	// Go through each remote in the exec plans and call them based on the types we want to pull from it.
-	for key := range execPlans {
+	for key, _ := range execPlans {
 		err := Sync(execPlans[key].addr, execPlans[key].endpoints, nil)
 		if err != nil {
 			errs = append(errs, err)
@@ -128,7 +123,7 @@ func doBootstrap() {
 	}
 	// If there are more than one bootstrap remote, go through each remote in the exec plan and call all endpoints in them. This should cause a manifest scan and not much download, and a timestamp setting. This is insurance to make sure that the data we have is the union of all bootstrappers we connected to.
 	if len(execPlans) > 1 {
-		for key := range execPlans {
+		for key, _ := range execPlans {
 			err := Sync(execPlans[key].addr, []string{}, nil)
 			if err != nil {
 				errs = append(errs, err)

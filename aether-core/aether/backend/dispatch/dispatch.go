@@ -8,11 +8,9 @@ import (
 	// "aether-core/aether/io/persistence"
 	"aether-core/aether/services/globals"
 	"aether-core/aether/services/logging"
-
 	// "aether-core/aether/services/safesleep"
 	"errors"
 	"fmt"
-
 	// "github.com/davecgh/go-spew/spew"
 	// "github.com/pkg/errors"
 	// "aether-core/aether/services/toolbox"
@@ -113,7 +111,7 @@ func Scout() error {
 		return errors.New("Scout got no unconnected addresses. Bailing.")
 	}
 	attempts := 0
-	for k := range addrs {
+	for k, _ := range addrs {
 		attempts++
 		if attempts > scoutAttempts {
 			break
@@ -147,9 +145,9 @@ func Scout() error {
 	// 	logging.Logf(1, "Scout: Connect failed. Error: %#v", err)
 	// }
 	// If we've come here without returning, scout tried its best, but could not connect to anything.
-	allFailedError := fmt.Errorf("Scout failed because all %v nodes we have tried has failed.", len(addrs))
+	allFailedError := errors.New(fmt.Sprintf("Scout failed because all %v nodes we have tried has failed.", len(addrs)))
 	logging.Logf(1, "Scout: Connect failed. Error: %#v", allFailedError)
-	return fmt.Errorf("Scout: Connect failed. Error: %#v", allFailedError)
+	return errors.New(fmt.Sprintf("Scout: Connect failed. Error: %#v", allFailedError))
 }
 
 // InboundConnectionWatch takes a look at how many inbound connections we have received in the past 3 minutes. If the number is zero, it triggers a reverse connection open request to a node.
@@ -261,7 +259,7 @@ func sameAddress(a1 *api.Address, a2 *api.Address) bool {
 func addrsInGivenSlice(addr *api.Address, slc *[]api.Address) bool {
 	address := *addr
 	slice := *slc
-	for i := range slice {
+	for i, _ := range slice {
 		if sameAddress(&address, &slice[i]) {
 			return true
 		}

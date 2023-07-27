@@ -10,7 +10,6 @@ import (
 	"math/rand"
 	"net"
 	"os"
-
 	// "path/filepath"
 	"runtime"
 	"strconv"
@@ -81,6 +80,8 @@ func Plural(entityType string) string {
 		return "posts"
 	} else if entityType == "vote" {
 		return "votes"
+	} else if entityType == "vote" {
+		return "votes"
 	} else if entityType == "truststate" {
 		return "truststates"
 	} else if entityType == "address" {
@@ -121,7 +122,7 @@ func ResetPath(path string) {
 }
 
 func IndexOf(searchString string, stringSlice []string) int {
-	for key := range stringSlice {
+	for key, _ := range stringSlice {
 		if stringSlice[key] == searchString {
 			return key
 		}
@@ -149,8 +150,7 @@ func GetInsecureRands(max, count int) []int {
 	if max < count {
 		max = count
 	}
-	var ints []int
-
+	ints := []int{}
 	for count > 0 {
 		rnd := GetInsecureRand(max)
 		if IndexOfInt(rnd, ints) == -1 {

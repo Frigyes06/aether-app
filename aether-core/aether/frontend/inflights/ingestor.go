@@ -7,7 +7,6 @@ package inflights
 import (
 	"aether-core/aether/frontend/beapiconsumer"
 	"aether-core/aether/frontend/clapiconsumer"
-
 	// "aether-core/aether/frontend/festructs"
 	"aether-core/aether/frontend/refresher"
 	"aether-core/aether/io/api"
@@ -117,32 +116,32 @@ func (o *inflights) getNextItem() interface{} {
 	now := time.Now().Unix()
 	var oldestEntity interface{}
 	oldestTs := now
-	for k := range o.InflightBoards {
+	for k, _ := range o.InflightBoards {
 		if e := o.InflightBoards[k]; e.Status.RequestedTimestamp <= oldestTs && (e.Status.StatusText == STATUS_WAITING || e.Status.StatusText == STATUS_MINTING) {
 			oldestEntity = interface{}(&o.InflightBoards[k])
 		}
 	}
-	for k := range o.InflightThreads {
+	for k, _ := range o.InflightThreads {
 		if e := o.InflightThreads[k]; e.Status.RequestedTimestamp <= oldestTs && (e.Status.StatusText == STATUS_WAITING || e.Status.StatusText == STATUS_MINTING) {
 			oldestEntity = interface{}(&o.InflightThreads[k])
 		}
 	}
-	for k := range o.InflightPosts {
+	for k, _ := range o.InflightPosts {
 		if e := o.InflightPosts[k]; e.Status.RequestedTimestamp <= oldestTs && (e.Status.StatusText == STATUS_WAITING || e.Status.StatusText == STATUS_MINTING) {
 			oldestEntity = interface{}(&o.InflightPosts[k])
 		}
 	}
-	for k := range o.InflightVotes {
+	for k, _ := range o.InflightVotes {
 		if e := o.InflightVotes[k]; e.Status.RequestedTimestamp <= oldestTs && (e.Status.StatusText == STATUS_WAITING || e.Status.StatusText == STATUS_MINTING) {
 			oldestEntity = interface{}(&o.InflightVotes[k])
 		}
 	}
-	for k := range o.InflightKeys {
+	for k, _ := range o.InflightKeys {
 		if e := o.InflightKeys[k]; e.Status.RequestedTimestamp <= oldestTs && (e.Status.StatusText == STATUS_WAITING || e.Status.StatusText == STATUS_MINTING) {
 			oldestEntity = interface{}(&o.InflightKeys[k])
 		}
 	}
-	for k := range o.InflightTruststates {
+	for k, _ := range o.InflightTruststates {
 		if e := o.InflightTruststates[k]; e.Status.RequestedTimestamp <= oldestTs && (e.Status.StatusText == STATUS_WAITING || e.Status.StatusText == STATUS_MINTING) {
 			oldestEntity = interface{}(&o.InflightTruststates[k])
 		}
@@ -156,7 +155,7 @@ func (o *inflights) getNextItem() interface{} {
 /*----------  Board  ----------*/
 
 /*
-These are all fairly similar, but most documentation is on the Key entity since that has a special case.
+  These are all fairly similar, but most documentation is on the Key entity since that has a special case.
 */
 func (o *InflightBoard) ingestCreate(ifl *inflights) {
 	switch o.Status.StatusText {
@@ -184,8 +183,7 @@ func (o *InflightBoard) ingestCreate(ifl *inflights) {
 			return
 		}
 		ep := e.Protobuf()
-		var eps []*pbstructs.Board
-
+		eps := []*pbstructs.Board{}
 		eps = append(eps, &ep)
 		o.Entity.Provable.Fingerprint = string(e.Fingerprint)
 		/*----------  Send to backend  ----------*/
@@ -252,8 +250,7 @@ func (o *InflightBoard) ingestUpdate(ifl *inflights) {
 			return
 		}
 		ep := entity.Protobuf()
-		var eps []*pbstructs.Board
-
+		eps := []*pbstructs.Board{}
 		eps = append(eps, &ep)
 		o.Entity.Provable.Fingerprint = string(entity.Fingerprint)
 		/*----------  Send to backend  ----------*/
@@ -307,8 +304,7 @@ func (o *InflightThread) ingestCreate(ifl *inflights) {
 			return
 		}
 		ep := e.Protobuf()
-		var eps []*pbstructs.Thread
-
+		eps := []*pbstructs.Thread{}
 		eps = append(eps, &ep)
 		o.Entity.Provable.Fingerprint = string(e.Fingerprint)
 		/*----------  Send to backend  ----------*/
@@ -371,8 +367,7 @@ func (o *InflightThread) ingestUpdate(ifl *inflights) {
 			return
 		}
 		ep := entity.Protobuf()
-		var eps []*pbstructs.Thread
-
+		eps := []*pbstructs.Thread{}
 		eps = append(eps, &ep)
 		o.Entity.Provable.Fingerprint = string(entity.Fingerprint)
 		/*----------  Send to backend  ----------*/
@@ -426,8 +421,7 @@ func (o *InflightPost) ingestCreate(ifl *inflights) {
 			return
 		}
 		ep := e.Protobuf()
-		var eps []*pbstructs.Post
-
+		eps := []*pbstructs.Post{}
 		eps = append(eps, &ep)
 		o.Entity.Provable.Fingerprint = string(e.Fingerprint)
 		/*----------  Send to backend  ----------*/
@@ -488,8 +482,7 @@ func (o *InflightPost) ingestUpdate(ifl *inflights) {
 			return
 		}
 		ep := entity.Protobuf()
-		var eps []*pbstructs.Post
-
+		eps := []*pbstructs.Post{}
 		eps = append(eps, &ep)
 		o.Entity.Provable.Fingerprint = string(entity.Fingerprint)
 		/*----------  Send to backend  ----------*/
@@ -544,8 +537,7 @@ func (o *InflightVote) ingestCreate(ifl *inflights) {
 			return
 		}
 		ep := e.Protobuf()
-		var eps []*pbstructs.Vote
-
+		eps := []*pbstructs.Vote{}
 		eps = append(eps, &ep)
 		o.Entity.Provable.Fingerprint = string(e.Fingerprint)
 		/*----------  Send to backend  ----------*/
@@ -606,8 +598,7 @@ func (o *InflightVote) ingestUpdate(ifl *inflights) {
 			return
 		}
 		ep := entity.Protobuf()
-		var eps []*pbstructs.Vote
-
+		eps := []*pbstructs.Vote{}
 		eps = append(eps, &ep)
 		o.Entity.Provable.Fingerprint = string(entity.Fingerprint)
 		/*----------  Send to backend  ----------*/
@@ -692,8 +683,7 @@ func (o *InflightKey) ingestCreate(ifl *inflights) {
 		globals.FrontendConfig.SetDehydratedLocalUserKeyEntity(string(kJson))
 		/*----------  Special logic for key (send to Client)  ----------*/
 		kp := key.Protobuf()
-		var eps []*pbstructs.Key
-
+		eps := []*pbstructs.Key{}
 		eps = append(eps, &kp)
 		// Stick it to the key refresher and have it compile this (so that we can get the canonical name and other compiled properties, if any)
 		observableUniverse := make(map[string]bool)
@@ -775,8 +765,7 @@ func (o *InflightKey) ingestUpdate(ifl *inflights) {
 		globals.FrontendConfig.SetDehydratedLocalUserKeyEntity(string(kJson))
 		/*----------  Special logic for key (send to Client)  ----------*/
 		kp := key.Protobuf()
-		var eps []*pbstructs.Key
-
+		eps := []*pbstructs.Key{}
 		eps = append(eps, &kp)
 		observableUniverse := make(map[string]bool)
 		observableUniverse[string(key.Fingerprint)] = true
@@ -834,8 +823,7 @@ func (o *InflightTruststate) ingestCreate(ifl *inflights) {
 			return
 		}
 		ep := e.Protobuf()
-		var eps []*pbstructs.Truststate
-
+		eps := []*pbstructs.Truststate{}
 		eps = append(eps, &ep)
 		o.Entity.Provable.Fingerprint = string(e.Fingerprint)
 		/*----------  Send to backend  ----------*/
@@ -898,8 +886,7 @@ func (o *InflightTruststate) ingestUpdate(ifl *inflights) {
 			return
 		}
 		ep := entity.Protobuf()
-		var eps []*pbstructs.Truststate
-
+		eps := []*pbstructs.Truststate{}
 		eps = append(eps, &ep)
 		o.Entity.Provable.Fingerprint = string(entity.Fingerprint)
 		/*----------  Send to backend  ----------*/

@@ -74,7 +74,7 @@ func RequestInboundSync(host string, subhost string, port uint16) error {
 		return errors.New("The remote connection failed in sync, or had trouble establishing a connection.")
 	default:
 		// The server set the reverse connection end status into an unknown state.
-		return fmt.Errorf("The local server set an end status to this reverse open connection, but it was not recognised. End status: %v", es)
+		return errors.New(fmt.Sprintf("The local server set an end status to this reverse open connection, but it was not recognised. End status: %v", es))
 	}
 }
 
@@ -107,7 +107,7 @@ func ReverseScout() error {
 		return errors.New("ReverseScout got no unconnected addresses. Bailing.")
 	}
 	attempts := 0
-	for k := range addrs {
+	for k, _ := range addrs {
 		if addrs[k].LocationType == 3 {
 			continue
 			// If it's an URL (type=3), we don't attempt to do a reverse open.
@@ -125,9 +125,9 @@ func ReverseScout() error {
 		return nil
 	}
 
-	allFailedError := fmt.Errorf("ReverseScout failed because all %v nodes we have tried has failed.", attempts)
+	allFailedError := errors.New(fmt.Sprintf("ReverseScout failed because all %v nodes we have tried has failed.", attempts))
 	logging.Logf(1, "ReverseScout: Connect failed. Error: %#v", allFailedError)
-	return fmt.Errorf("ReverseScout: Connect failed. Error: %#v", allFailedError)
+	return errors.New(fmt.Sprintf("ReverseScout: Connect failed. Error: %#v", allFailedError))
 }
 
 /*=====  End of Reverse scout  ======*/

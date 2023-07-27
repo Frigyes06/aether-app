@@ -2,47 +2,47 @@ export {}
 
 let globals = require('../globals/globals')
 let fesupervisor = require('../fesupervisor/fesupervisor')
-let ipc = require('../../../../node_modules/electron-better-ipc')
+const {ipcMain} = require('electron') // Register IPC caller
 
 /*----------  Main receivers  ----------*/
 // i.e. main does something at the request of renderer
 
-ipc.answerRenderer('GetFrontendReady', function (): boolean {
+ipcMain.handle('GetFrontendReady', function (): boolean {
   return globals.FrontendReady
 })
 
-ipc.answerRenderer('SetFrontendReady', function (ready: boolean) {
+ipcMain.on('SetFrontendReady', function (ready: boolean) {
   globals.FrontendReady = ready
 })
 
-ipc.answerRenderer('SetRendererReady', function (ready: boolean) {
+ipcMain.on('SetRendererReady', function (ready: boolean) {
   globals.RendererReady = ready
 })
 
-ipc.answerRenderer('GetFrontendAPIPort', function (): number {
+ipcMain.handle('GetFrontendAPIPort', function (): number {
   return globals.FrontendAPIPort
 })
 
-ipc.answerRenderer('SetFrontendAPIPort', function (port: number) {
+ipcMain.on('SetFrontendAPIPort', function (port: number) {
   globals.FrontendAPIPort = port
 })
 
-ipc.answerRenderer('GetFrontendClientConnInitialised', function (): boolean {
+ipcMain.handle('GetFrontendClientConnInitialised', function (): boolean {
   return globals.FrontendClientConnInitialised
 })
 
-ipc.answerRenderer(
+ipcMain.on(
   'SetFrontendClientConnInitialised',
   function (initialised: boolean) {
     globals.FrontendClientConnInitialised = initialised
   }
 )
 
-ipc.answerRenderer('GetClientAPIServerPort', function (): number {
+ipcMain.handle('GetClientAPIServerPort', function (): number {
   return globals.ClientAPIServerPort
 })
 
-ipc.answerRenderer('SetClientAPIServerPort', function (port: number): boolean {
+ipcMain.handle('SetClientAPIServerPort', function (port: number): boolean {
   console.log('ipc client api server port: ', port)
   globals.ClientAPIServerPort = port
   return fesupervisor.StartFrontendDaemon(globals.ClientAPIServerPort)

@@ -37,7 +37,7 @@ func (s *server) BackendReady(ctx context.Context, req *pb.BEReadyRequest) (*pb.
 	peer, ok := peer.FromContext(ctx)
 	if !ok {
 		logging.Logf(1, "The backend peer address on the GRPC connection in BackendReady could not be read. Something went very wrong, and we are not able to communicate with the backend. Peer: %#v", peer)
-		return nil, fmt.Errorf("The backend peer address on the GRPC connection in BackendReady could not be read. Something went very wrong, and we are not able to communicate with the backend. Peer: %#v", peer)
+		return nil, errors.New(fmt.Sprintf("The backend peer address on the GRPC connection in BackendReady could not be read. Something went very wrong, and we are not able to communicate with the backend. Peer: %#v", peer))
 	}
 	beAddr := peer.Addr.(*net.TCPAddr)
 	backendIp := beAddr.IP.String()
@@ -61,7 +61,7 @@ func (s *server) GetThreadAndPosts(ctx context.Context, req *pb.ThreadAndPostsRe
 		logging.Logf(1, "Getting BoardCarrier for in GetThreadAndPosts encountered an error. Error: %v", err)
 	}
 	b := festructs.CompiledBoard{}
-	for key := range bc.Boards {
+	for key, _ := range bc.Boards {
 		if bc.Boards[key].Fingerprint == fp {
 			b = bc.Boards[key]
 		}
@@ -97,7 +97,7 @@ func (s *server) GetBoardAndThreads(ctx context.Context, req *pb.BoardAndThreads
 		logging.Logf(1, "Getting BoardCarrier for in GetBoardAndThreads encountered an error. Error: %v", err)
 	}
 	b := festructs.CompiledBoard{}
-	for key := range bc.Boards {
+	for key, _ := range bc.Boards {
 		if bc.Boards[key].Fingerprint == fp {
 			b = bc.Boards[key]
 		}
@@ -111,7 +111,7 @@ func (s *server) GetBoardAndThreads(ctx context.Context, req *pb.BoardAndThreads
 	resp.Board.LastSeen = lastseen
 
 	threads := festructs.CThreadBatch{}
-	for k1 := range bc.Threads {
+	for k1, _ := range bc.Threads {
 		// Filter out the moddeletes / modapprovals based on the ruleset.
 		if bc.Threads[k1].Board == fp {
 			if bc.Threads[k1].CompiledContentSignals.ModApproved || bc.Threads[k1].CompiledContentSignals.SelfModApproved {
@@ -130,9 +130,8 @@ func (s *server) GetBoardAndThreads(ctx context.Context, req *pb.BoardAndThreads
 		threads.SortByCreation()
 	}
 	// Convert all threads to protos
-	var tprotos []*feobjects.CompiledThreadEntity
-
-	for k := range threads {
+	tprotos := []*feobjects.CompiledThreadEntity{}
+	for k, _ := range threads {
 		tprotos = append(tprotos, threads[k].Protobuf())
 	}
 	resp.Threads = tprotos
@@ -151,16 +150,15 @@ func (s *server) GetAllBoards(ctx context.Context, req *pb.AllBoardsRequest) (*p
 	}
 
 	cb := festructs.CBoardBatch{}
-	for key := range boards {
-		for k2 := range boards[key].Boards {
+	for key, _ := range boards {
+		for k2, _ := range boards[key].Boards {
 			item := boards[key].Boards[k2]
 			cb = append(cb, item)
 		}
 	}
 	cb.SortByThreadsCount()
-	var cproto []*feobjects.CompiledBoardEntity
-
-	for k := range cb {
+	cproto := []*feobjects.CompiledBoardEntity{}
+	for k, _ := range cb {
 		item := cb[k].Protobuf()
 		cproto = append(cproto, item)
 		subbed, notify, lastseen := globals.FrontendConfig.ContentRelations.IsSubbedBoard(item.Fingerprint)
@@ -227,7 +225,7 @@ func (s *server) GetUserAndGraph(ctx context.Context, req *pb.UserAndGraphReques
 			logging.Logf(1, "Getting User Header Carrier for GetUserAndGraph encountered an error. Error: %v", err)
 		}
 		u := festructs.CompiledUser{}
-		for key := range uh.Users {
+		for key, _ := range uh.Users {
 			if uh.Users[key].Fingerprint == fp {
 				u = uh.Users[key]
 			}
@@ -264,8 +262,7 @@ func (s *server) GetUncompiledEntityByKey(ctx context.Context, req *pb.Uncompile
 	logging.Logf(1, "We've received an uncompiled entity by key request. Event: %v", *req)
 	switch req.GetEntityType() {
 	case pb.UncompiledEntityType_BOARD:
-		var entities []*mimapi.Board
-
+		entities := []*mimapi.Board{}
 		if boardName := req.GetBoardName(); len(boardName) > 0 {
 			entities = beapiconsumer.GetBoardsByName(boardName)
 		} else {
@@ -298,8 +295,7 @@ func (s *server) GetUncompiledEntityByKey(ctx context.Context, req *pb.Uncompile
 		}
 		return &resp, nil
 	case pb.UncompiledEntityType_KEY:
-		var entities []*mimapi.Key
-
+		entities := []*mimapi.Key{}
 		if keyName := req.GetKeyName(); len(keyName) > 0 {
 			entities = beapiconsumer.GetKeysByName(keyName)
 		} else {
@@ -454,24 +450,22 @@ func ApplyFEConfigChanges(req *pb.FEConfigChangesPayload) {
 }
 
 func (s *server) RequestBoardReports(ctx context.Context, req *pb.BoardReportsRequest) (*pb.BoardReportsResponse, error) {
-	var threadCarriers []festructs.ThreadCarrier
-
+	threadCarriers := []festructs.ThreadCarrier{}
 	err := globals.KvInstance.Find("ParentFingerprint", req.GetBoardFingerprint(), &threadCarriers)
 	if err != nil {
 		logging.Logf(1, "Fetching threads of this board to get the reports failed. Error: %v Board FP: %v", err, req.GetBoardFingerprint())
 	}
-	var rtes []*feobjects.ReportsTabEntry
-
-	for k := range threadCarriers {
+	rtes := []*feobjects.ReportsTabEntry{}
+	for k, _ := range threadCarriers {
 		// Get all reportes threads and posts in this thread carrier
 		thrs := getReportedThreads(threadCarriers[k].Threads)
 		psts := getReportedPosts(threadCarriers[k].Posts)
 		// And convert them to ReportsTabEntries, then protobufs
-		for k2 := range thrs {
+		for k2, _ := range thrs {
 			entry := festructs.NewReportsTabEntryFromThread(&thrs[k2])
 			rtes = append(rtes, entry.Protobuf())
 		}
-		for k3 := range psts {
+		for k3, _ := range psts {
 			entry := festructs.NewReportsTabEntryFromPost(&psts[k3])
 			rtes = append(rtes, entry.Protobuf())
 		}
@@ -484,9 +478,8 @@ func (s *server) RequestBoardReports(ctx context.Context, req *pb.BoardReportsRe
 }
 
 func getReportedThreads(sl []festructs.CompiledThread) []festructs.CompiledThread {
-	var reported []festructs.CompiledThread
-
-	for k := range sl {
+	reported := []festructs.CompiledThread{}
+	for k, _ := range sl {
 		if len(sl[k].CompiledContentSignals.Reports) > 0 && !sl[k].CompiledContentSignals.SelfModIgnored {
 			reported = append(reported, sl[k])
 		}
@@ -495,9 +488,8 @@ func getReportedThreads(sl []festructs.CompiledThread) []festructs.CompiledThrea
 }
 
 func getReportedPosts(sl []festructs.CompiledPost) []festructs.CompiledPost {
-	var reported []festructs.CompiledPost
-
-	for k := range sl {
+	reported := []festructs.CompiledPost{}
+	for k, _ := range sl {
 		if len(sl[k].CompiledContentSignals.Reports) > 0 && !sl[k].CompiledContentSignals.SelfModIgnored {
 			reported = append(reported, sl[k])
 		}
@@ -507,24 +499,22 @@ func getReportedPosts(sl []festructs.CompiledPost) []festructs.CompiledPost {
 
 func (s *server) RequestBoardModActions(ctx context.Context, req *pb.BoardModActionsRequest) (*pb.BoardModActionsResponse, error) {
 	logging.Logf(1, "request board mod actions called.")
-	var threadCarriers []festructs.ThreadCarrier
-
+	threadCarriers := []festructs.ThreadCarrier{}
 	err := globals.KvInstance.Find("ParentFingerprint", req.GetBoardFingerprint(), &threadCarriers)
 	if err != nil {
 		logging.Logf(1, "Fetching threads of this board to get the ModActions failed. Error: %v Board FP: %v", err, req.GetBoardFingerprint())
 	}
-	var rtes []*feobjects.ModActionsTabEntry
-
-	for k := range threadCarriers {
+	rtes := []*feobjects.ModActionsTabEntry{}
+	for k, _ := range threadCarriers {
 		// Get all ModActioned threads and posts in this thread carrier
 		thrs := getModActionedThreads(threadCarriers[k].Threads)
 		psts := getModActionedPosts(threadCarriers[k].Posts)
 		// And convert them to ModActionsTabEntries, then protobufs
-		for k2 := range thrs {
+		for k2, _ := range thrs {
 			entry := festructs.NewModActionsTabEntryFromThread(&thrs[k2])
 			rtes = append(rtes, entry.Protobuf())
 		}
-		for k3 := range psts {
+		for k3, _ := range psts {
 			entry := festructs.NewModActionsTabEntryFromPost(&psts[k3])
 			rtes = append(rtes, entry.Protobuf())
 		}
@@ -538,9 +528,8 @@ func (s *server) RequestBoardModActions(ctx context.Context, req *pb.BoardModAct
 
 // For these two below, we also want to do modapprovals in the future, not just modblocks. TODO
 func getModActionedThreads(sl []festructs.CompiledThread) []festructs.CompiledThread {
-	var modBlocked []festructs.CompiledThread
-
-	for k := range sl {
+	modBlocked := []festructs.CompiledThread{}
+	for k, _ := range sl {
 		if len(sl[k].CompiledContentSignals.ModBlocks) > 0 && !sl[k].CompiledContentSignals.SelfModIgnored {
 			modBlocked = append(modBlocked, sl[k])
 		}
@@ -549,9 +538,8 @@ func getModActionedThreads(sl []festructs.CompiledThread) []festructs.CompiledTh
 }
 
 func getModActionedPosts(sl []festructs.CompiledPost) []festructs.CompiledPost {
-	var modBlocked []festructs.CompiledPost
-
-	for k := range sl {
+	modBlocked := []festructs.CompiledPost{}
+	for k, _ := range sl {
 		if len(sl[k].CompiledContentSignals.ModBlocks) > 0 && !sl[k].CompiledContentSignals.SelfModIgnored {
 			modBlocked = append(modBlocked, sl[k])
 		}
@@ -579,15 +567,13 @@ func (s *server) SendMintedUsernames(ctx context.Context, req *pb.SendMintedUser
 	logging.Logf(1, "We've received a send minted usernames request. Event: %v", *req)
 	resp := pb.SendMintedUsernamesResponse{}
 	jsonTs := req.GetMintedUsernamesRawJSON()
-	var tses []api.Truststate
-
+	tses := []api.Truststate{}
 	err := json.Unmarshal([]byte(jsonTs), &tses)
 	if err != nil {
 		logging.Logf(1, "Unmarshalling from JSON Unique name Truststate failed. Error: %v", err)
 		return &resp, err
 	}
-	var tsProtosSlice []*mimapi.Truststate
-
+	tsProtosSlice := []*mimapi.Truststate{}
 	for _, ts := range tses {
 		tsProto := ts.Protobuf()
 		tsProtosSlice = append(tsProtosSlice, &tsProto)

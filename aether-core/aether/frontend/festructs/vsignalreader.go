@@ -47,9 +47,8 @@ If you want to get all types in a typeclass, specify type as -1.
 // GetATDs gets all AddsToDiscussion type of votes targeting a given entity, or all ATDs whose target is child of a given parent entity.
 func GetATDs(parentfp, parenttype, targetfp string, startts, nowts int64, noDescendants bool) []AddsToDiscussionSignal {
 	rawSignals := getVoteBasedSignal(parentfp, parenttype, targetfp, startts, nowts, 1, -1, noDescendants)
-	var sgns []AddsToDiscussionSignal
-
-	for k := range rawSignals {
+	sgns := []AddsToDiscussionSignal{}
+	for k, _ := range rawSignals {
 		sgns = append(sgns, AddsToDiscussionSignal{
 			BaseVoteSignal: BaseVoteSignal{
 				Fingerprint:       rawSignals[k].GetProvable().GetFingerprint(),
@@ -69,9 +68,8 @@ func GetATDs(parentfp, parenttype, targetfp string, startts, nowts int64, noDesc
 
 func GetFGs(parentfp, parenttype, targetfp string, startts, nowts int64, noDescendants bool) []FollowsGuidelinesSignal {
 	rawSignals := getVoteBasedSignal(parentfp, parenttype, targetfp, startts, nowts, 2, -1, noDescendants)
-	var sgns []FollowsGuidelinesSignal
-
-	for k := range rawSignals {
+	sgns := []FollowsGuidelinesSignal{}
+	for k, _ := range rawSignals {
 		vmeta, err := metaparse.ReadMeta("Vote", rawSignals[k].GetMeta())
 		if err != nil {
 			logging.Logf(2, "We failed to parse this Meta field. Raw Meta field: %v, Entity: %v Error: %v", targetfp, err)
@@ -100,9 +98,8 @@ func GetFGs(parentfp, parenttype, targetfp string, startts, nowts int64, noDesce
 
 func GetMAs(parentfp, parenttype, targetfp string, startts, nowts int64, noDescendants bool) []ModActionsSignal {
 	rawSignals := getVoteBasedSignal(parentfp, parenttype, targetfp, startts, nowts, 3, -1, noDescendants)
-	var sgns []ModActionsSignal
-
-	for k := range rawSignals {
+	sgns := []ModActionsSignal{}
+	for k, _ := range rawSignals {
 		vmeta, err := metaparse.ReadMeta("Vote", rawSignals[k].GetMeta())
 		if err != nil {
 			logging.Logf(2, "We failed to parse this Meta field. Raw Meta field: %v, Entity: %v Error: %v", targetfp, err)

@@ -12,7 +12,6 @@ if (isDev) {
 }
 var Vuex = require('../../../node_modules/vuex').default
 Vue.use(Vuex)
-var ipc = require('../../../node_modules/electron-better-ipc')
 var fe = require('../services/feapiconsumer/feapiconsumer')
 var globalMethods = require('../services/globals/methods')
 
@@ -514,7 +513,7 @@ let mutations = {
       notification.onclick = function () {
         var router = require('../renderermain').router
         router.push('/user/' + localUserFp + '/notifications')
-        ipc.callMain('FocusAndShow')
+        window.electronAPI.FocusAndShow()
       }
     }
     if (unreads.length === 1) {
@@ -540,7 +539,7 @@ let mutations = {
       notification.onclick = function () {
         var router = require('../renderermain').router
         router.push('/user/' + localUserFp + '/notifications')
-        ipc.callMain('FocusAndShow')
+        window.electronAPI.FocusAndShow()
       }
     }
     /*---------- END Handle OS notifications  ----------*/
@@ -567,9 +566,9 @@ let mutations = {
     ) {
       // There *is* a change. Apply the change.
       if (externalContentAutoloadDisabled) {
-        ipc.callMain('DisableExternalResourceAutoLoad')
+        window.electronAPI.DisableExternalResourceAutoLoad()
       } else {
-        ipc.callMain('EnableExternalResourceAutoLoad')
+        window.electronAPI.EnableExternalResourceAutoLoad()
       }
     }
     state.externalContentAutoloadDisabled = externalContentAutoloadDisabled

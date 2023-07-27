@@ -6,14 +6,14 @@ export {}
 
 var globalMethods = require('../services/globals/methods')
 
-let dotStateOrderSection = {
+let dotStateOrderSection: Record<string, number> = {
   status_section_unknown: 0,
   status_section_ok: 1,
   status_section_warn: 2,
   status_section_fail: 3,
 }
 
-let dotStateOrderSubsection = {
+let dotStateOrderSubsection: Record<string, number> = {
   status_subsection_unknown: 0,
   status_subsection_ok: 1,
   status_subsection_warn: 2,

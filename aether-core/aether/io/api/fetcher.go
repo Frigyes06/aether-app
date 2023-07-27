@@ -12,9 +12,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-
 	// "github.com/jmoiron/sqlx"
 	"crypto/tls"
+	"golang.org/x/net/proxy"
 	"io"
 	"io/ioutil"
 	"net"
@@ -22,8 +22,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"golang.org/x/net/proxy"
 	// "context"
 	// "github.com/davecgh/go-spew/spew"
 	// "reflect"
@@ -485,7 +483,7 @@ func GetPageRaw(host string, subhost string, port uint16, location string, metho
 	// }
 	pageVerified, err := apiresp.VerifySignature() // If signature check is disabled, this will always return true.
 	if err != nil {
-		return ApiResponse{}, fmt.Errorf("Page signature verification failed with an error. Error: %s", err)
+		return ApiResponse{}, errors.New(fmt.Sprintf("Page signature verification failed with an error. Error: %s", err))
 	}
 	if !pageVerified {
 		return ApiResponse{}, errors.New("Page signature verification failed. The signature does not match.")
@@ -503,13 +501,12 @@ func GetPageRaw(host string, subhost string, port uint16, location string, metho
 		return ApiResponse{}, errs[0]
 	}
 	if len(errs) >= 3 {
-		var errStrs []string
-
+		errStrs := []string{}
 		for _, err := range errs {
 			errStrs = append(errStrs, err.Error())
 		}
 		logging.Log(1, fmt.Sprintf("This page has 3 or more entities who has failed verification. Errors: %#v", errStrs))
-		return ApiResponse{}, fmt.Errorf("This page has 3 or more entities who has failed verification")
+		return ApiResponse{}, errors.New(fmt.Sprintf("This page has 3 or more entities who has failed verification"))
 	}
 	return apiresp, nil
 }
@@ -565,14 +562,14 @@ func generateHitlist(host string, subhost string, port uint16, location string, 
 	manifestResponse, err := getManifestOfCache(host, subhost, port, location, reverseConn)
 	// logging.Logf(1, "Manifest Response: %#v", manifestResponse)
 	if err != nil {
-		return make(map[int]bool), fmt.Errorf("Error raised from GetManifestOfCache inside generateHitlist. Error: %s", err)
+		return make(map[int]bool), errors.New(fmt.Sprintf("Error raised from GetManifestOfCache inside generateHitlist. Error: %s", err))
 	}
 	countManifests(manifestResponse)
 
 	// Look at everything in the index and find the things that we want to pull. Page Number : bool pairs help us find which pages to hit.
 	allPgs := make(map[int]bool)
 BoardLoop:
-	for key := range manifestResponse.BoardManifests {
+	for key, _ := range manifestResponse.BoardManifests {
 		for _, val := range manifestResponse.BoardManifests[key].Entities {
 			if !ExistsInDB("board", val.Fingerprint, val.LastUpdate) {
 				// Grab the whole page and insert into to-be-fetched queue, DB will remove useless stuff.
@@ -582,7 +579,7 @@ BoardLoop:
 		}
 	}
 ThreadLoop:
-	for key := range manifestResponse.ThreadManifests {
+	for key, _ := range manifestResponse.ThreadManifests {
 		for _, val := range manifestResponse.ThreadManifests[key].Entities {
 			if !ExistsInDB("thread", val.Fingerprint, val.LastUpdate) {
 				// Grab the whole page and insert into to-be-fetched queue, DB will remove useless stuff.
@@ -592,7 +589,7 @@ ThreadLoop:
 		}
 	}
 PostLoop:
-	for key := range manifestResponse.PostManifests {
+	for key, _ := range manifestResponse.PostManifests {
 		for _, val := range manifestResponse.PostManifests[key].Entities {
 			if !ExistsInDB("post", val.Fingerprint, val.LastUpdate) {
 				// Grab the whole page and insert into to-be-fetched queue, DB will remove useless stuff.
@@ -602,7 +599,7 @@ PostLoop:
 		}
 	}
 VoteLoop:
-	for key := range manifestResponse.VoteManifests {
+	for key, _ := range manifestResponse.VoteManifests {
 		for _, val := range manifestResponse.VoteManifests[key].Entities {
 			if !ExistsInDB("vote", val.Fingerprint, val.LastUpdate) {
 				// Grab the whole page and insert into to-be-fetched queue, DB will remove useless stuff.
@@ -612,7 +609,7 @@ VoteLoop:
 		}
 	}
 KeyLoop:
-	for key := range manifestResponse.KeyManifests {
+	for key, _ := range manifestResponse.KeyManifests {
 		for _, val := range manifestResponse.KeyManifests[key].Entities {
 			if !ExistsInDB("key", val.Fingerprint, val.LastUpdate) {
 				// Grab the whole page and insert into to-be-fetched queue, DB will remove useless stuff.
@@ -622,7 +619,7 @@ KeyLoop:
 		}
 	}
 TruststateLoop:
-	for key := range manifestResponse.TruststateManifests {
+	for key, _ := range manifestResponse.TruststateManifests {
 		for _, val := range manifestResponse.TruststateManifests[key].Entities {
 			if !ExistsInDB("truststate", val.Fingerprint, val.LastUpdate) {
 				// Grab the whole page and insert into to-be-fetched queue, DB will remove useless stuff.
@@ -728,14 +725,14 @@ func GetManifestGatedCache(host string, subhost string, port uint16, location st
 		resp, err2 := GetCache(host, subhost, port, location, endpoint == "addresses", reverseConn)
 		return resp, err2
 	} else if err != nil {
-		logging.Log(1, fmt.Errorf("Error raised from generateHitlist inside GetManifestGatedCache. Error: %s", err))
-		return Response{}, fmt.Errorf("Error raised from generateHitlist inside GetManifestGatedCache. Error: %s", err)
+		logging.Log(1, errors.New(fmt.Sprintf("Error raised from generateHitlist inside GetManifestGatedCache. Error: %s", err)))
+		return Response{}, errors.New(fmt.Sprintf("Error raised from generateHitlist inside GetManifestGatedCache. Error: %s", err))
 	}
 	logging.Log(2, fmt.Sprintf("The pages we have to make a call to are: %#v\n", allPgs))
 
 	// For each page we have for this post response, hit the main cache and gather the data.
 	mainResp := Response{}
-	for key := range allPgs {
+	for key, _ := range allPgs {
 		loc := fmt.Sprint(location, "/", key, ".json")
 		logging.Log(2, fmt.Sprintf("Making a request to %s\n", loc))
 		resp, _, err := GetPage(host, subhost, port, loc, "GET", []byte{}, reverseConn)
@@ -890,7 +887,7 @@ func GetPOSTEndpoint(host string, subhost string, port uint16, endpoint string, 
 	}
 	postResp, respDuration, err7 := GetPage(host, subhost, port, endpointsMap[endpoint], "POST", reqAsJson, reverseConn)
 	if err7 != nil {
-		return Response{}, respDuration, fmt.Errorf("Getting POST Endpoint for this entity type failed. Endpoint type: %s, Error: %s", endpoint, err7)
+		return Response{}, respDuration, errors.New(fmt.Sprintf("Getting POST Endpoint for this entity type failed. Endpoint type: %s, Error: %s", endpoint, err7))
 	}
 	// presp := dbg_CheckIfExistsInDb(postResp)
 	allResults := Response{}
@@ -912,7 +909,7 @@ func GetPOSTEndpoint(host string, subhost string, port uint16, endpoint string, 
 			postCacheResp, err8 := GetManifestGatedCache(host, subhost, port, fmt.Sprintf("responses/%s", clink.ResponseUrl), endpoint, reverseConn)
 			// We're adding /responses/ because that's where the singular responses will be.
 			if err8 != nil {
-				return allResults, respDuration, fmt.Errorf("Getting Multi page POST Endpoint for this entity type failed. Endpoint type: %s, Error: %s", endpoint, err8)
+				return allResults, respDuration, errors.New(fmt.Sprintf("Getting Multi page POST Endpoint for this entity type failed. Endpoint type: %s, Error: %s", endpoint, err8))
 			}
 			logging.Logf(2, "postCacheResp counts at Get POST endpoint: \nB: %v, T: %v, P: %v, V: %v, K: %v, TS: %v, A: %v",
 				len(postCacheResp.Boards),

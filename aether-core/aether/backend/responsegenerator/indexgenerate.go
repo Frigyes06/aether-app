@@ -10,7 +10,6 @@ import (
 	"aether-core/aether/services/globals"
 	"aether-core/aether/services/logging"
 	"aether-core/aether/services/toolbox"
-
 	// "aether-core/aether/services/randomhashgen"
 	// "encoding/json"
 	// "errors"
@@ -93,28 +92,28 @@ func createUnbakedIndexes(fullData *[]api.Response) *api.Response {
 	fd := *fullData
 	var resp api.Response
 	if len(fd) > 0 {
-		for i := range fd {
+		for i, _ := range fd {
 			// For each Api.Response page
 			if len(fd[i].Boards) > 0 {
-				for j := range fd[i].Boards {
+				for j, _ := range fd[i].Boards {
 					entityIndex := createBoardIndex(&fd[i].Boards[j], i)
 					resp.BoardIndexes = append(resp.BoardIndexes, entityIndex)
 				}
 			}
 			if len(fd[i].Threads) > 0 {
-				for j := range fd[i].Threads {
+				for j, _ := range fd[i].Threads {
 					entityIndex := createThreadIndex(&fd[i].Threads[j], i)
 					resp.ThreadIndexes = append(resp.ThreadIndexes, entityIndex)
 				}
 			}
 			if len(fd[i].Posts) > 0 {
-				for j := range fd[i].Posts {
+				for j, _ := range fd[i].Posts {
 					entityIndex := createPostIndex(&fd[i].Posts[j], i)
 					resp.PostIndexes = append(resp.PostIndexes, entityIndex)
 				}
 			}
 			if len(fd[i].Votes) > 0 {
-				for j := range fd[i].Votes {
+				for j, _ := range fd[i].Votes {
 					entityIndex := createVoteIndex(&fd[i].Votes[j], i)
 					resp.VoteIndexes = append(resp.VoteIndexes, entityIndex)
 				}
@@ -122,13 +121,13 @@ func createUnbakedIndexes(fullData *[]api.Response) *api.Response {
 			// Addresses: Address doesn't have an index form. It is its own index.
 			// Addresses are skipped here.
 			if len(fd[i].Keys) > 0 {
-				for j := range fd[i].Keys {
+				for j, _ := range fd[i].Keys {
 					entityIndex := createKeyIndex(&fd[i].Keys[j], i)
 					resp.KeyIndexes = append(resp.KeyIndexes, entityIndex)
 				}
 			}
 			if len(fd[i].Truststates) > 0 {
-				for j := range fd[i].Truststates {
+				for j, _ := range fd[i].Truststates {
 					entityIndex := createTruststateIndex(&fd[i].Truststates[j], i)
 					resp.TruststateIndexes = append(resp.TruststateIndexes, entityIndex)
 				}

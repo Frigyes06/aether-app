@@ -8,7 +8,6 @@ import (
 	// "aether-core/aether/io/persistence"
 	"aether-core/aether/services/globals"
 	"aether-core/aether/services/logging"
-
 	// "aether-core/aether/services/safesleep"
 	// "errors"
 	"fmt"
@@ -44,7 +43,7 @@ func Pinger(fullAddressesSlice []api.Address) []api.Address {
 		pages = append(pages, page)
 	}
 	// For every page,
-	for i := range pages {
+	for i, _ := range pages {
 		// If there's a shutdown in progress, break and exit.
 		if globals.BackendTransientConfig.ShutdownInitiated {
 			return []api.Address{}
@@ -53,7 +52,7 @@ func Pinger(fullAddressesSlice []api.Address) []api.Address {
 		// Run the core logic.
 		addrs := pages[i]
 		outputChan := make(chan api.Address)
-		for j := range addrs {
+		for j, _ := range addrs {
 			// Check if shutdown was initiated.
 			if globals.BackendTransientConfig.ShutdownInitiated {
 				break // Stop processing and return
@@ -73,7 +72,7 @@ func Pinger(fullAddressesSlice []api.Address) []api.Address {
 	// Clean blanks.
 	logging.Log(2, fmt.Sprintf("All updated addresses count (this should be the same as goroutine count: %d", len(allUpdatedAddresses)))
 	var cleanedAllUpdatedAddresses []api.Address
-	for i := range allUpdatedAddresses {
+	for i, _ := range allUpdatedAddresses {
 		if allUpdatedAddresses[i].Location != "" {
 			// The location is not blank. This is an actual updated address.
 			cleanedAllUpdatedAddresses = append(cleanedAllUpdatedAddresses, allUpdatedAddresses[i])
