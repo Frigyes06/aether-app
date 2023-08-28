@@ -1,5 +1,5 @@
 {
-  "name": "Aether",
+  "name": "aether",
   "version": "2.1.0-dev.1",
   "description": "Aether",
   "readme": "https://getaether.net",
@@ -65,7 +65,7 @@
     "bulma": "^0.9.4",
     "css-loader": "^5.2.7",
     "dompurify": "1.0.9",
-    "electron-context-menu": "github:nehbit/electron-context-menu",
+    "electron-context-menu": "^3.6.1",
     "electron-hunspell": "^1.1.2",
     "electron-is-dev": "^2.0.0",
     "electron-store": "^8.1.0",
