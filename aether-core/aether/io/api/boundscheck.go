@@ -6,6 +6,7 @@ package api
 import (
 	"aether-core/aether/services/logging"
 	"aether-core/aether/services/toolbox"
+	"errors"
 	"fmt"
 	"strconv"
 	"unicode/utf8"
@@ -237,7 +238,7 @@ func fingerprintSliceBC(item *[]Fingerprint, minLen, maxLen int) bool {
 	if !sliceValid {
 		return false
 	}
-	for key := range *item {
+	for key, _ := range *item {
 		if !fingerprintBC((*item)[key]) {
 			return false
 		}
@@ -256,7 +257,7 @@ func timestampSliceBC(item *[]Timestamp, minLen, maxLen int) bool {
 	if !sliceValid {
 		return false
 	}
-	for key := range *item {
+	for key, _ := range *item {
 		if !timestampBC((*item)[key]) {
 			return false
 		}
@@ -324,7 +325,7 @@ func boardOwnerSliceBC(item *[]BoardOwner) bool {
 	sliceValid := intBC(int64(len(*item)), MIN_BOARD_BOARDOWNERS_V1, MAX_BOARD_BOARDOWNERS_V1)
 	boardOwnersValid := true
 	if sliceValid {
-		for key := range *item {
+		for key, _ := range *item {
 			if !boardOwnerBC(&(*item)[key]) {
 				boardOwnersValid = false
 				break
@@ -347,7 +348,7 @@ func subprotocolSliceBC(item *[]Subprotocol) bool {
 	sliceValid := intBC(int64(len(*item)), MIN_ADDRESS_PROTOCOL_SUBPROTOCOL_V1, MAX_ADDRESS_PROTOCOL_SUBPROTOCOL_V1)
 	subprotocolsValid := true
 	if sliceValid {
-		for key := range *item {
+		for key, _ := range *item {
 			if !subprotocolBC(&(*item)[key]) {
 				subprotocolsValid = false
 				break
@@ -401,8 +402,7 @@ func filterBC(item *Filter) bool {
 			MIN_APIRESPONSE_FILTER_VALUES_EMBED_V1_0, MAX_APIRESPONSE_FILTER_VALUES_EMBED_V1_0,
 			MIN_APIRESPONSE_FILTER_VALUES_EMBED_NAME_V1_0, MAX_APIRESPONSE_FILTER_VALUES_EMBED_NAME_V1_0)
 	} else if item.Type == "timestamp" {
-		var tss []Timestamp
-
+		tss := []Timestamp{}
 		for _, val := range item.Values {
 			ts, _ := strconv.ParseInt(val, 10, 64)
 			tss = append(tss, Timestamp(ts))
@@ -419,7 +419,7 @@ func filterSliceBC(item *[]Filter, minLen, maxLen int) bool {
 	if !sliceValid {
 		return false
 	}
-	for key := range *item {
+	for key, _ := range *item {
 		if !filterBC(&(*item)[key]) {
 			return false
 		}
@@ -446,7 +446,7 @@ func resultCacheSliceBC(item *[]ResultCache, minLen, maxLen int) bool {
 	if !sliceValid {
 		return false
 	}
-	for key := range *item {
+	for key, _ := range *item {
 		if !resultCacheBC(&(*item)[key]) {
 			return false
 		}
@@ -464,7 +464,7 @@ func pageManifestEntitySliceBC(item *[]PageManifestEntity, minLen, maxLen int) b
 	if !sliceValid {
 		return false
 	}
-	for key := range *item {
+	for key, _ := range *item {
 		if !pageManifestEntityBC(&(*item)[key]) {
 			return false
 		}
@@ -492,7 +492,7 @@ func pageManifestSliceBC(item *[]PageManifest, minLen, maxLen int) bool {
 	if !sliceValid {
 		return false
 	}
-	for key := range *item {
+	for key, _ := range *item {
 		if !pageManifestBC(&(*item)[key]) {
 			return false
 		}
@@ -512,7 +512,7 @@ func entityCountSliceBC(item *[]EntityCount, minLen, maxLen int) bool {
 	if !sliceValid {
 		return false
 	}
-	for key := range *item {
+	for key, _ := range *item {
 		if !entityCountBC(&(*item)[key]) {
 			return false
 		}
@@ -732,111 +732,111 @@ func (item *Board) CheckBounds() (bool, error) {
 	if item.EntityVersion == 1 {
 		return checkBoardBounds_V1(item), nil
 	} else {
-		return false, fmt.Errorf("We do not support this version of this entity for bounds checking. Entity: %#v", item)
+		return false, errors.New(fmt.Sprintf("We do not support this version of this entity for bounds checking. Entity: %#v", item))
 	}
 }
 func (item *Thread) CheckBounds() (bool, error) {
 	if item.EntityVersion == 1 {
 		return checkThreadBounds_V1(item), nil
 	} else {
-		return false, fmt.Errorf("We do not support this version of this entity for bounds checking. Entity: %#v", item)
+		return false, errors.New(fmt.Sprintf("We do not support this version of this entity for bounds checking. Entity: %#v", item))
 	}
 }
 func (item *Post) CheckBounds() (bool, error) {
 	if item.EntityVersion == 1 {
 		return checkPostBounds_V1(item), nil
 	} else {
-		return false, fmt.Errorf("We do not support this version of this entity for bounds checking. Entity: %#v", item)
+		return false, errors.New(fmt.Sprintf("We do not support this version of this entity for bounds checking. Entity: %#v", item))
 	}
 }
 func (item *Vote) CheckBounds() (bool, error) {
 	if item.EntityVersion == 1 {
 		return checkVoteBounds_V1(item), nil
 	} else {
-		return false, fmt.Errorf("We do not support this version of this entity for bounds checking. Entity: %#v", item)
+		return false, errors.New(fmt.Sprintf("We do not support this version of this entity for bounds checking. Entity: %#v", item))
 	}
 }
 func (item *Key) CheckBounds() (bool, error) {
 	if item.EntityVersion == 1 {
 		return checkKeyBounds_V1(item), nil
 	} else {
-		return false, fmt.Errorf("We do not support this version of this entity for bounds checking. Entity: %#v", item)
+		return false, errors.New(fmt.Sprintf("We do not support this version of this entity for bounds checking. Entity: %#v", item))
 	}
 }
 func (item *Truststate) CheckBounds() (bool, error) {
 	if item.EntityVersion == 1 {
 		return checkTruststateBounds_V1(item), nil
 	} else {
-		return false, fmt.Errorf("We do not support this version of this entity for bounds checking. Entity: %#v", item)
+		return false, errors.New(fmt.Sprintf("We do not support this version of this entity for bounds checking. Entity: %#v", item))
 	}
 }
 func (item *Address) CheckBounds() (bool, error) {
 	if item.EntityVersion == 1 {
 		return checkAddressBounds_V1(item), nil
 	} else {
-		return false, fmt.Errorf("We do not support this version of this entity for bounds checking. Entity: %#v", item)
+		return false, errors.New(fmt.Sprintf("We do not support this version of this entity for bounds checking. Entity: %#v", item))
 	}
 }
 
 func checkIndexes(item *Answer) (bool, error) {
-	for key := range item.BoardIndexes {
+	for key, _ := range item.BoardIndexes {
 		valid, err := item.BoardIndexes[key].CheckBounds()
 		if err != nil {
-			return false, fmt.Errorf("Check Index encountered a failure. Object: %#v", item.BoardIndexes[key])
+			return false, errors.New(fmt.Sprintf("Check Index encountered a failure. Object: %#v", item.BoardIndexes[key]))
 		}
 		if !valid {
 			return false, nil
 		}
 	}
-	for key := range item.ThreadIndexes {
+	for key, _ := range item.ThreadIndexes {
 		valid, err := item.ThreadIndexes[key].CheckBounds()
 		if err != nil {
-			return false, fmt.Errorf("Check Index encountered a failure. Object: %#v", item.ThreadIndexes[key])
+			return false, errors.New(fmt.Sprintf("Check Index encountered a failure. Object: %#v", item.ThreadIndexes[key]))
 		}
 		if !valid {
 			return false, nil
 		}
 	}
-	for key := range item.PostIndexes {
+	for key, _ := range item.PostIndexes {
 		valid, err := item.PostIndexes[key].CheckBounds()
 		if err != nil {
-			return false, fmt.Errorf("Check Index encountered a failure. Object: %#v", item.PostIndexes[key])
+			return false, errors.New(fmt.Sprintf("Check Index encountered a failure. Object: %#v", item.PostIndexes[key]))
 		}
 		if !valid {
 			return false, nil
 		}
 	}
-	for key := range item.VoteIndexes {
+	for key, _ := range item.VoteIndexes {
 		valid, err := item.VoteIndexes[key].CheckBounds()
 		if err != nil {
-			return false, fmt.Errorf("Check Index encountered a failure. Object: %#v", item.VoteIndexes[key])
+			return false, errors.New(fmt.Sprintf("Check Index encountered a failure. Object: %#v", item.VoteIndexes[key]))
 		}
 		if !valid {
 			return false, nil
 		}
 	}
-	for key := range item.KeyIndexes {
+	for key, _ := range item.KeyIndexes {
 		valid, err := item.KeyIndexes[key].CheckBounds()
 		if err != nil {
-			return false, fmt.Errorf("Check Index encountered a failure. Object: %#v", item.KeyIndexes[key])
+			return false, errors.New(fmt.Sprintf("Check Index encountered a failure. Object: %#v", item.KeyIndexes[key]))
 		}
 		if !valid {
 			return false, nil
 		}
 	}
-	for key := range item.TruststateIndexes {
+	for key, _ := range item.TruststateIndexes {
 		valid, err := item.TruststateIndexes[key].CheckBounds()
 		if err != nil {
-			return false, fmt.Errorf("Check Index encountered a failure. Object: %#v", item.TruststateIndexes[key])
+			return false, errors.New(fmt.Sprintf("Check Index encountered a failure. Object: %#v", item.TruststateIndexes[key]))
 		}
 		if !valid {
 			return false, nil
 		}
 	}
-	for key := range item.AddressIndexes {
+	for key, _ := range item.AddressIndexes {
 		valid, err := item.AddressIndexes[key].CheckBounds()
 		if err != nil {
-			return false, fmt.Errorf("Check Index encountered a failure. Object: %#v", item.AddressIndexes[key])
+			return false, errors.New(fmt.Sprintf("Check Index encountered a failure. Object: %#v", item.AddressIndexes[key]))
 		}
 		if !valid {
 			return false, nil
@@ -851,12 +851,12 @@ func (item *ApiResponse) CheckBounds() (bool, error) {
 		item.Address.Protocol.VersionMinor == 0 {
 		indexesValid, err := checkIndexes(&item.ResponseBody)
 		if err != nil {
-			return false, fmt.Errorf("ApiResponse bounds checker encountered an error. Error: %#v", err)
+			return false, errors.New(fmt.Sprintf("ApiResponse bounds checker encountered an error. Error: %#v", err))
 		}
 		return checkApiResponseBounds_V1_0(item) && indexesValid, nil
 		// return checkApiResponseBounds_V1_0(item), nil
 	} else {
-		return false, fmt.Errorf("We do not support this version of this entity for bounds checking. Entity: %#v", item)
+		return false, errors.New(fmt.Sprintf("We do not support this version of this entity for bounds checking. Entity: %#v", item))
 	}
 }
 
@@ -866,7 +866,7 @@ func (item *BoardIndex) CheckBounds() (bool, error) {
 	if item.EntityVersion == 1 {
 		return checkBoardIndexBounds_V1(item), nil
 	} else {
-		return false, fmt.Errorf("We do not support this version of this entity for bounds checking. Entity: %#v", item)
+		return false, errors.New(fmt.Sprintf("We do not support this version of this entity for bounds checking. Entity: %#v", item))
 	}
 }
 
@@ -874,7 +874,7 @@ func (item *ThreadIndex) CheckBounds() (bool, error) {
 	if item.EntityVersion == 1 {
 		return checkThreadIndexBounds_V1(item), nil
 	} else {
-		return false, fmt.Errorf("We do not support this version of this entity for bounds checking. Entity: %#v", item)
+		return false, errors.New(fmt.Sprintf("We do not support this version of this entity for bounds checking. Entity: %#v", item))
 	}
 }
 
@@ -882,7 +882,7 @@ func (item *PostIndex) CheckBounds() (bool, error) {
 	if item.EntityVersion == 1 {
 		return checkPostIndexBounds_V1(item), nil
 	} else {
-		return false, fmt.Errorf("We do not support this version of this entity for bounds checking. Entity: %#v", item)
+		return false, errors.New(fmt.Sprintf("We do not support this version of this entity for bounds checking. Entity: %#v", item))
 	}
 }
 
@@ -890,7 +890,7 @@ func (item *VoteIndex) CheckBounds() (bool, error) {
 	if item.EntityVersion == 1 {
 		return checkVoteIndexBounds_V1(item), nil
 	} else {
-		return false, fmt.Errorf("We do not support this version of this entity for bounds checking. Entity: %#v", item)
+		return false, errors.New(fmt.Sprintf("We do not support this version of this entity for bounds checking. Entity: %#v", item))
 	}
 }
 
@@ -898,7 +898,7 @@ func (item *KeyIndex) CheckBounds() (bool, error) {
 	if item.EntityVersion == 1 {
 		return checkKeyIndexBounds_V1(item), nil
 	} else {
-		return false, fmt.Errorf("We do not support this version of this entity for bounds checking. Entity: %#v", item)
+		return false, errors.New(fmt.Sprintf("We do not support this version of this entity for bounds checking. Entity: %#v", item))
 	}
 }
 
@@ -906,7 +906,7 @@ func (item *TruststateIndex) CheckBounds() (bool, error) {
 	if item.EntityVersion == 1 {
 		return checkTruststateIndexBounds_V1(item), nil
 	} else {
-		return false, fmt.Errorf("We do not support this version of this entity for bounds checking. Entity: %#v", item)
+		return false, errors.New(fmt.Sprintf("We do not support this version of this entity for bounds checking. Entity: %#v", item))
 	}
 }
 
@@ -915,6 +915,6 @@ func (item *AddressIndex) CheckBounds() (bool, error) {
 		addr := Address(*item)
 		return checkAddressBounds_V1(&addr), nil // Not addressIndex - address. Because they're the same.
 	} else {
-		return false, fmt.Errorf("We do not support this version of this entity for bounds checking. Entity: %#v", item)
+		return false, errors.New(fmt.Sprintf("We do not support this version of this entity for bounds checking. Entity: %#v", item))
 	}
 }

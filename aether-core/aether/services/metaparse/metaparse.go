@@ -4,9 +4,9 @@
 package metaparse
 
 import (
+	"errors"
 	"fmt"
-
-	jsoniter "github.com/json-iterator/go"
+	"github.com/json-iterator/go"
 )
 
 var (
@@ -67,7 +67,7 @@ func ReadMeta(entityType, metaAsString string) (MetaStruct, error) {
 		}
 		return &em, nil
 	}
-	return nil, fmt.Errorf("The entityType you gave to JSON Parser is unknown. You gave: %v", entityType)
+	return nil, errors.New(fmt.Sprintf("The entityType you gave to JSON Parser is unknown. You gave: %v", entityType))
 }
 
 func CreateMetaString(payloadStruct MetaStruct) (string, error) {

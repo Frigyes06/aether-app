@@ -3,7 +3,11 @@
 // This file contains methods that are useful in multiple places, and depend on nothing but themselves.
 
 export {}
-
+declare global {
+  interface Window {
+    electronAPI?: any;
+  }
+}
 var vs = require('../../store/index')
 // ^ For some reason, having default above does not work, returns undefined. We're just adding the default below and it should work.
 

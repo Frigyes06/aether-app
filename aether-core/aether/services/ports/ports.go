@@ -27,8 +27,7 @@ func GetFreePort() int {
 
 // GetFreePorts returns a number of free ports that are currently unused in the local system.
 func GetFreePorts(number int) []int {
-	var ports []int
-
+	ports := []int{}
 	clashcount := 0
 	checkport := func(ports []int, port int) bool {
 		for _, val := range ports {

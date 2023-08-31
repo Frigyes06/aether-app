@@ -2,6 +2,7 @@ package api_test
 
 import (
 	"aether-core/aether/backend/cmd"
+	"aether-core/aether/backend/responsegenerator"
 	"aether-core/aether/io/api"
 	"aether-core/aether/io/persistence"
 	"aether-core/aether/services/globals"
@@ -11,6 +12,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"golang.org/x/crypto/ed25519"
 	"io"
 	"io/ioutil"
 	"log"
@@ -21,8 +23,6 @@ import (
 	"strings"
 	"testing"
 	"time"
-
-	"golang.org/x/crypto/ed25519"
 )
 
 // Tests will be run with the current protocol version.

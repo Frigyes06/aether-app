@@ -6,7 +6,6 @@ import (
 	"aether-core/aether/services/logging"
 	"aether-core/aether/services/toolbox"
 	"sort"
-
 	// "fmt"
 	"time"
 )
@@ -80,16 +79,16 @@ func DetermineObservableUniverse() map[string]map[string]bool {
 	ou := make(map[string]map[string]bool)
 	// Determine observable universe for: boards
 	boardFps := make(map[string]bool)
-	for k := range cache.Boards {
+	for k, _ := range cache.Boards {
 		boardFps[cache.Boards[k].GetProvable().GetFingerprint()] = true
 	}
-	for k := range cache.Threads {
+	for k, _ := range cache.Threads {
 		boardFps[cache.Threads[k].GetBoard()] = true
 	}
-	for k := range cache.Posts {
+	for k, _ := range cache.Posts {
 		boardFps[cache.Posts[k].GetBoard()] = true
 	}
-	for k := range cache.Votes {
+	for k, _ := range cache.Votes {
 		boardFps[cache.Votes[k].GetBoard()] = true
 	}
 	// What's not included: keys that create the boards, and truststates that point to those keys. (I.e. if a board owner gets a 'member' badge in orange it won't automatically trigger a wholesale board update.) This is mostly for efficiency reasons, since boards can have an arbitrary number of board owners and elected mods.
@@ -122,10 +121,10 @@ func DetermineObservableUniverse() map[string]map[string]bool {
 	// FUTURE: if we need this, implement it here
 	// Determine observable universe for: keys
 	keyFps := make(map[string]bool)
-	for k := range cache.Keys {
+	for k, _ := range cache.Keys {
 		keyFps[cache.Keys[k].GetProvable().GetFingerprint()] = true
 	}
-	for k := range cache.Truststates {
+	for k, _ := range cache.Truststates {
 		keyFps[cache.Truststates[k].GetTarget()] = true
 	}
 	ou["Keys"] = keyFps
@@ -171,8 +170,7 @@ func (o *NewFeedItem) GetUserFp() string {
 }
 
 func GenerateNewFeed(firstEverGeneration bool) []NewFeedItem {
-	var newFeed []NewFeedItem
-
+	newFeed := []NewFeedItem{}
 	sfwlist := make(map[string]bool)
 	for _, v := range globals.FrontendConfig.ContentRelations.SFWList.Boards {
 		sfwlist[v] = true
@@ -274,7 +272,7 @@ type cacheQuery struct {
 
 func queryBoardsCache(q cacheQuery) []*mimapi.Board {
 	var result []*mimapi.Board
-	for k := range cache.Boards {
+	for k, _ := range cache.Boards {
 		// Fingerprints range checker
 		if !fingerprintsFilter(cache.Boards[k].GetProvable().GetFingerprint(), q.Fingerprints) {
 			continue
@@ -286,7 +284,7 @@ func queryBoardsCache(q cacheQuery) []*mimapi.Board {
 
 func queryThreadsCache(q cacheQuery) []*mimapi.Thread {
 	var result []*mimapi.Thread
-	for k := range cache.Threads {
+	for k, _ := range cache.Threads {
 		// Fingerprints range checker
 		if !fingerprintsFilter(cache.Threads[k].GetProvable().GetFingerprint(), q.Fingerprints) {
 			continue
@@ -301,7 +299,7 @@ func queryThreadsCache(q cacheQuery) []*mimapi.Thread {
 
 func queryPostsCache(q cacheQuery) []*mimapi.Post {
 	var result []*mimapi.Post
-	for k := range cache.Posts {
+	for k, _ := range cache.Posts {
 		// Fingerprints range checker
 		if !fingerprintsFilter(cache.Posts[k].GetProvable().GetFingerprint(), q.Fingerprints) {
 			continue
@@ -322,7 +320,7 @@ func queryPostsCache(q cacheQuery) []*mimapi.Post {
 
 func queryVotesCache(q cacheQuery, parentType string) []*mimapi.Vote {
 	var result []*mimapi.Vote
-	for k := range cache.Votes {
+	for k, _ := range cache.Votes {
 		// Fingerprints range checker
 		if !fingerprintsFilter(cache.Votes[k].GetProvable().GetFingerprint(), q.Fingerprints) {
 			continue
@@ -361,7 +359,7 @@ func queryVotesCache(q cacheQuery, parentType string) []*mimapi.Vote {
 
 func queryKeysCache(q cacheQuery) []*mimapi.Key {
 	var result []*mimapi.Key
-	for k := range cache.Keys {
+	for k, _ := range cache.Keys {
 		// Fingerprints range checker
 		if !fingerprintsFilter(cache.Keys[k].GetProvable().GetFingerprint(), q.Fingerprints) {
 			continue
@@ -373,7 +371,7 @@ func queryKeysCache(q cacheQuery) []*mimapi.Key {
 
 func queryTruststatesCache(q cacheQuery) []*mimapi.Truststate {
 	var result []*mimapi.Truststate
-	for k := range cache.Truststates {
+	for k, _ := range cache.Truststates {
 		// Fingerprints range checker
 		if !fingerprintsFilter(cache.Truststates[k].GetProvable().GetFingerprint(), q.Fingerprints) {
 			continue

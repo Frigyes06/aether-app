@@ -22,8 +22,7 @@ import (
 )
 
 func countEntities(r *api.Response) *[]api.EntityCount {
-	var ecs []api.EntityCount
-
+	ecs := []api.EntityCount{}
 	if len(r.Boards) > 0 {
 		ec := api.EntityCount{
 			Protocol: "c0",
@@ -85,8 +84,7 @@ func countEntities(r *api.Response) *[]api.EntityCount {
 
 // mergeCounts merges one configstore entity count into a list of api entitycounts.
 func mergeCounts(entityCount *[]api.EntityCount, csEntityCount configstore.EntityCount) []api.EntityCount {
-	var ec []api.EntityCount
-
+	ec := []api.EntityCount{}
 	for _, val := range *entityCount {
 		ec = append(ec, val)
 	}
@@ -94,7 +92,7 @@ func mergeCounts(entityCount *[]api.EntityCount, csEntityCount configstore.Entit
 		return ec
 	}
 	// ec := *entityCount // create a copy, don't manipulate the original
-	for i := range ec {
+	for i, _ := range ec {
 		if ec[i].Name == csEntityCount.Name {
 			ec[i].Count = ec[i].Count + csEntityCount.Count
 		}
@@ -104,8 +102,7 @@ func mergeCounts(entityCount *[]api.EntityCount, csEntityCount configstore.Entit
 
 // convertToConfigStoreEntityCount converts an api entity count slice to a configstore entity count slice.
 func convertToConfigStoreEntityCount(apiec []api.EntityCount) []configstore.EntityCount {
-	var csec []configstore.EntityCount
-
+	csec := []configstore.EntityCount{}
 	for _, val := range apiec {
 		csec = append(csec, configstore.EntityCount(val))
 	}

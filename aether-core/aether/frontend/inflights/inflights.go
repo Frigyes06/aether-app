@@ -5,7 +5,6 @@ package inflights
 import (
 	"aether-core/aether/frontend/clapiconsumer"
 	"aether-core/aether/frontend/festructs"
-
 	// "aether-core/aether/frontend/refresher"
 	"aether-core/aether/protos/clapi"
 	"aether-core/aether/protos/feapi"
@@ -50,22 +49,22 @@ func (o *inflights) Protobuf() *clapi.Inflights {
 	o.lock.Lock()
 	defer o.lock.Unlock()
 	opb := clapi.Inflights{}
-	for k := range o.InflightBoards {
+	for k, _ := range o.InflightBoards {
 		opb.Boards = append(opb.Boards, o.InflightBoards[k].Protobuf())
 	}
-	for k := range o.InflightThreads {
+	for k, _ := range o.InflightThreads {
 		opb.Threads = append(opb.Threads, o.InflightThreads[k].Protobuf())
 	}
-	for k := range o.InflightPosts {
+	for k, _ := range o.InflightPosts {
 		opb.Posts = append(opb.Posts, o.InflightPosts[k].Protobuf())
 	}
-	for k := range o.InflightVotes {
+	for k, _ := range o.InflightVotes {
 		opb.Votes = append(opb.Votes, o.InflightVotes[k].Protobuf())
 	}
-	for k := range o.InflightKeys {
+	for k, _ := range o.InflightKeys {
 		opb.Keys = append(opb.Keys, o.InflightKeys[k].Protobuf())
 	}
-	for k := range o.InflightTruststates {
+	for k, _ := range o.InflightTruststates {
 		opb.Truststates = append(opb.Truststates, o.InflightTruststates[k].Protobuf())
 	}
 	return &opb
@@ -186,7 +185,7 @@ func (o *InflightStatus) setCompletionPercent() {
 		return
 	}
 	clp := 0
-	for k := range statusesOrdered {
+	for k, _ := range statusesOrdered {
 		if statusesOrdered[k] == o.StatusText {
 			clp = (k * 100) / (len(statusesOrdered) - 1)
 			// ^ If you have 6 items, k will be 0-5 range, if you don't do -1 it will never be 100%.
@@ -408,11 +407,9 @@ func saveModIgnore(boardfp, threadfp, targetfp string) {
 // This function goes through all the votes in the queue and if there are more than one pointing at the same item, it only leaves the most recent. The idea is that you can change your mind before it hits the mint.
 func (o *inflights) cleanRepeatVotes() {
 	// First, create a list of unprocessed and in progress votes
-	var unprocessedVotes []InflightVote
-	// votes that hasn't started processing
-	var inProgressVotes []InflightVote
-	// votes that have
-	for k := range o.InflightVotes {
+	unprocessedVotes := []InflightVote{} // votes that hasn't started processing
+	inProgressVotes := []InflightVote{}  // votes that have
+	for k, _ := range o.InflightVotes {
 		if o.InflightVotes[k].Status.StatusText == STATUS_WAITING {
 			unprocessedVotes = append(unprocessedVotes, o.InflightVotes[k])
 			continue
@@ -421,16 +418,15 @@ func (o *inflights) cleanRepeatVotes() {
 	}
 	// Create a map of the latest versions of those unprocessed votes
 	signalsTargetsInWaiting := make(map[string]int64) //target:timestamp
-	for k := range unprocessedVotes {
+	for k, _ := range unprocessedVotes {
 		if signalsTargetsInWaiting[unprocessedVotes[k].Entity.GetTarget()] <= unprocessedVotes[k].Status.RequestedTimestamp {
 			// "<=" bc. if it's coming later, likely it happened later.
 			signalsTargetsInWaiting[unprocessedVotes[k].Entity.GetTarget()] = unprocessedVotes[k].Status.RequestedTimestamp
 		}
 	}
 	// If they're the latest versions, grab them from the unproc votes list.
-	var dedupedVotes []InflightVote
-
-	for k := range unprocessedVotes {
+	dedupedVotes := []InflightVote{}
+	for k, _ := range unprocessedVotes {
 		/*
 		   unprocessedVotes[k] = scan through 0 1 2 3 4 5 ..
 		   unprocessedVotes[len(unprocessedVotes)-1-k] = scan thru .. 5 4 3 2 1 0
@@ -449,11 +445,9 @@ func (o *inflights) cleanRepeatVotes() {
 
 func (o *inflights) cleanRepeatTruststates() {
 	// First, create a list of unprocessed and in progress truststates
-	var unprocessedTses []InflightTruststate
-	// tses that hasn't started processing
-	var inProgressTses []InflightTruststate
-	// tses that have
-	for k := range o.InflightTruststates {
+	unprocessedTses := []InflightTruststate{} // tses that hasn't started processing
+	inProgressTses := []InflightTruststate{}  // tses that have
+	for k, _ := range o.InflightTruststates {
 		if o.InflightTruststates[k].Status.StatusText == STATUS_WAITING {
 			unprocessedTses = append(unprocessedTses, o.InflightTruststates[k])
 			continue
@@ -462,16 +456,15 @@ func (o *inflights) cleanRepeatTruststates() {
 	}
 	// Create a map of the latest versions of those unprocessed tses
 	signalsTargetsInWaiting := make(map[string]int64) //target:timestamp
-	for k := range unprocessedTses {
+	for k, _ := range unprocessedTses {
 		if signalsTargetsInWaiting[unprocessedTses[k].Entity.GetTarget()] < unprocessedTses[k].Status.RequestedTimestamp {
 			// "<=" bc. if it's coming later, likely it happened later.
 			signalsTargetsInWaiting[unprocessedTses[k].Entity.GetTarget()] = unprocessedTses[k].Status.RequestedTimestamp
 		}
 	}
 	// If they're the latest versions, grab them from the unproc votes list.
-	var dedupedTs []InflightTruststate
-
-	for k := range unprocessedTses {
+	dedupedTs := []InflightTruststate{}
+	for k, _ := range unprocessedTses {
 		if unprocessedTses[len(unprocessedTses)-1-k].Status.RequestedTimestamp == signalsTargetsInWaiting[unprocessedTses[len(unprocessedTses)-1-k].Entity.GetTarget()] {
 			dedupedTs = append(dedupedTs, unprocessedTses[len(unprocessedTses)-1-k])
 			// And clean out the map, so no other vote can enter through the same fp:ts pair.
@@ -734,9 +727,8 @@ func (o *inflights) Prune() {
 	o.lock.Lock()
 	defer o.lock.Unlock()
 
-	var newInflightBoards []InflightBoard
-
-	for k := range o.InflightBoards {
+	newInflightBoards := []InflightBoard{}
+	for k, _ := range o.InflightBoards {
 		if o.InflightBoards[k].Status.Fulfilled() {
 			// o.FulfilledBoards = append(o.FulfilledBoards, o.InflightBoards[k])
 			continue
@@ -745,9 +737,8 @@ func (o *inflights) Prune() {
 	}
 	o.InflightBoards = newInflightBoards
 
-	var newInflightThreads []InflightThread
-
-	for k := range o.InflightThreads {
+	newInflightThreads := []InflightThread{}
+	for k, _ := range o.InflightThreads {
 		if o.InflightThreads[k].Status.Fulfilled() {
 			// o.FulfilledThreads = append(o.FulfilledThreads, o.InflightThreads[k])
 			continue
@@ -756,9 +747,8 @@ func (o *inflights) Prune() {
 	}
 	o.InflightThreads = newInflightThreads
 
-	var newInflightPosts []InflightPost
-
-	for k := range o.InflightPosts {
+	newInflightPosts := []InflightPost{}
+	for k, _ := range o.InflightPosts {
 		if o.InflightPosts[k].Status.Fulfilled() {
 			// o.FulfilledPosts = append(o.FulfilledPosts, o.InflightPosts[k])
 			continue
@@ -767,9 +757,8 @@ func (o *inflights) Prune() {
 	}
 	o.InflightPosts = newInflightPosts
 
-	var newInflightVotes []InflightVote
-
-	for k := range o.InflightVotes {
+	newInflightVotes := []InflightVote{}
+	for k, _ := range o.InflightVotes {
 		if o.InflightVotes[k].Status.Fulfilled() {
 			// o.FulfilledVotes = append(o.FulfilledVotes, o.InflightVotes[k])
 			continue
@@ -778,9 +767,8 @@ func (o *inflights) Prune() {
 	}
 	o.InflightVotes = newInflightVotes
 
-	var newInflightKeys []InflightKey
-
-	for k := range o.InflightKeys {
+	newInflightKeys := []InflightKey{}
+	for k, _ := range o.InflightKeys {
 		if o.InflightKeys[k].Status.Fulfilled() {
 			// o.FulfilledKeys = append(o.FulfilledKeys, o.InflightKeys[k])
 			continue
@@ -789,9 +777,8 @@ func (o *inflights) Prune() {
 	}
 	o.InflightKeys = newInflightKeys
 
-	var newInflightTruststates []InflightTruststate
-
-	for k := range o.InflightTruststates {
+	newInflightTruststates := []InflightTruststate{}
+	for k, _ := range o.InflightTruststates {
 		if o.InflightTruststates[k].Status.Fulfilled() {
 			// o.FulfilledTruststates = append(o.FulfilledTruststates, o.InflightTruststates[k])
 			continue

@@ -9,7 +9,8 @@ var globals = require('./services/globals/globals') // Register globals
 var metrics = require('./services/metrics/metrics')(true, false)
 
 require('./services/eipc/eipc-main') // Register IPC events
-var ipc = require('../../node_modules/electron-better-ipc') // Register IPC caller
+const {ipcMain} = require('electron') // Register IPC caller
+console.log('test')
 const elc = require('electron')
 // const starters = require('./starters')
 // const feapiconsumer = require('./services/feapiconsumer/feapiconsumer')
@@ -47,15 +48,15 @@ autoUpdater.autoUpdater.requestHeaders = { authorization: '' }
 
 autoUpdater.autoUpdater.on('update-downloaded', function () {
   // ev: any, info: any
-  ipc.callRenderer(win, 'NewUpdateReady', true)
+  win.webContents.send('NewUpdateReady', true)
 })
 
-ipc.answerRenderer('RestartToUpdateTheApp', function () {
+ipcMain.on('RestartToUpdateTheApp', function () {
   autoUpdater.autoUpdater.quitAndInstall()
   elc.app.quit()
 })
 
-ipc.answerRenderer('AskNewUpdateReady', function () {
+ipcMain.on('AskNewUpdateReady', function () {
   checkSoftwareUpdate()
 })
 
@@ -223,7 +224,7 @@ if (!gotSingleInstanceLock) {
         linkToLoadAtBoot = argv.slice(3)[0].substring(6)
       }
       if (linkToLoadAtBoot.length > 0) {
-        ipc.callRenderer(win, 'RouteTo', linkToLoadAtBoot)
+        win.webContents.send('RouteTo', linkToLoadAtBoot)
       }
       openAppWindow()
     }
@@ -262,6 +263,8 @@ function EstablishExternalResourceAutoLoadFiltering() {
     'https://*.coinbase.com/**',
     'file://**', // So that we can load the local client app itself
     'chrome-devtools://**',
+    'devtools://**',
+    'chrome-devtools-frontend://**',
     'chrome-extension://**', // for vue devtools
   ]
 
@@ -271,19 +274,21 @@ function EstablishExternalResourceAutoLoadFiltering() {
     'https://*.mxpnl.com/**',
     'file://**',
     'chrome-devtools://**',
+    'devtools://**',
+    'chrome-devtools-frontend://**',
     'chrome-extension://**',
   ]
 
   // This list should be editable. (TODO)
   let whitelist = autoloadEnabledWhitelist
 
-  ipc.answerRenderer('DisableExternalResourceAutoLoad', function () {
+  ipcMain.handle('DisableExternalResourceAutoLoad', function () {
     // Only the URLs required for correct app functionality.
     whitelist = autoloadDisabledWhitelist
     return true
   })
 
-  ipc.answerRenderer('EnableExternalResourceAutoLoad', function () {
+  ipcMain.handle('EnableExternalResourceAutoLoad', function () {
     // Only the URLs required for correct app functionality.
     whitelist = autoloadEnabledWhitelist
     return true
@@ -306,10 +311,6 @@ function EstablishExternalResourceAutoLoadFiltering() {
 }
 
 function EstablishElectronWindow() {
-  // If not prod, install Vue devtools.
-  if (isDev) {
-    require('vue-devtools').install()
-  }
   /* Check whether we are started in the hidden state as part of the computer startup process. */
   const loginSettings = elc.app.getLoginItemSettings()
   let hiddenStartAtBoot = loginSettings.wasOpenedAsHidden
@@ -340,6 +341,8 @@ function EstablishElectronWindow() {
     webPreferences: {
       // blinkFeatures: 'OverlayScrollbars'
       nodeIntegration: true,
+      enableRemoteModule: true,
+      preload: path.join(__dirname, 'preload.js')
     },
   }
   if (process.platform === 'win32') {
@@ -364,6 +367,7 @@ function EstablishElectronWindow() {
   })
   win.loadFile('index.html')
   if (isDev) {
+    //require('vue-devtools').install()
     // Open the DevTools.
     win.webContents.openDevTools({ mode: 'bottom' })
   }
@@ -395,7 +399,7 @@ function EstablishElectronWindow() {
     }
     // Normal open-url event works for Mac and Linux
     if (linkToLoadAtBoot.length > 0) {
-      ipc.callRenderer(win, 'RouteTo', linkToLoadAtBoot)
+      win.webContents.send('RouteTo', linkToLoadAtBoot)
     }
   })
   win.webContents.on('will-navigate', function (e: any, reqUrl: any) {
@@ -417,7 +421,7 @@ function EstablishElectronWindow() {
 
   /*----------  Fullscreen state comms to the renderer.  ----------*/
   function sendFullscreenState(isFullscreen: boolean) {
-    ipc.callRenderer(win, 'FullscreenState', isFullscreen)
+    win.webContents.send('FullscreenState', isFullscreen)
   }
   win.on('enter-full-screen', function () {
     sendFullscreenState(true)
@@ -429,7 +433,7 @@ function EstablishElectronWindow() {
 
   elc.app.on('open-url', function (e: any, url: string) {
     e.preventDefault()
-    ipc.callRenderer(win, 'RouteTo', url.substring(6))
+    win.webContents.send('RouteTo', url.substring(6))
     openAppWindow()
   })
 }
@@ -451,11 +455,11 @@ elc.app.on('will-finish-launching', function () {
 
 let openPreferences = function () {
   openAppWindow()
-  let rendererReadyChecker = function () {
+  let rendererReadyChecker: TimerHandler = function () {
     if (!(globals.RendererReady && DOM_READY)) {
       return setTimeout(rendererReadyChecker, 100)
     }
-    return ipc.callRenderer(win, 'RouteTo', '/settings')
+    return win.webContents.send('RouteTo', '/settings')
   }
   setTimeout(rendererReadyChecker, 100)
 }
@@ -508,11 +512,11 @@ function EstablishTray() {
   })
 }
 
-ipc.answerRenderer('QuitApp', function () {
+ipcMain.on('QuitApp', function () {
   elc.app.quit()
 })
 
-ipc.answerRenderer('FocusAndShow', function () {
+ipcMain.on('FocusAndShow', function () {
   openAppWindow()
   return true
 })
@@ -556,7 +560,7 @@ let isWindows = process.platform === 'win32'
 let isMac = process.platform === 'darwin'
 
 function ConstructAppMenu() {
-  const menu = []
+  const menu: Record<string, any> = []
   if (!isLinux) {
     // In Linux (i.e. Ubuntu), having this causes two 'Aether' items to show, one of them being the app name, the other being this menu. So this should only be added in the case the OS is not Linux.
     menu.push({
@@ -565,7 +569,7 @@ function ConstructAppMenu() {
         {
           label: 'About Aether',
           click: function () {
-            return ipc.callRenderer(win, 'RouteTo', '/about')
+            return win.webContents.send('RouteTo', '/about')
           },
         },
         {

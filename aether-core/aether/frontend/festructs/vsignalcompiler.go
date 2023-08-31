@@ -6,7 +6,6 @@ package festructs
 import (
 	"aether-core/aether/services/globals"
 	"aether-core/aether/services/logging"
-
 	"github.com/willf/bloom"
 )
 
@@ -153,7 +152,7 @@ func (c *CompiledFG) Insert(sg FollowsGuidelinesSignal) {
 		return
 	}
 	// If it already exists in the list, overwrite existing
-	for k := range c.FGs {
+	for k, _ := range c.FGs {
 		if c.FGs[k].Fingerprint != sg.Fingerprint {
 			continue
 		}
@@ -204,7 +203,7 @@ func (c *CompiledMA) Insert(sg ModActionsSignal) {
 		return
 	}
 	// If it already exists in the list, overwrite existing
-	for k := range c.MAs {
+	for k, _ := range c.MAs {
 		if c.MAs[k].Fingerprint != sg.Fingerprint {
 			continue
 		}
@@ -252,7 +251,7 @@ func (c *CompiledMA) Insert(sg ModActionsSignal) {
 type CATDBatch []CompiledATD
 
 func (cbatch *CATDBatch) Insert(atds []AddsToDiscussionSignal, nowts int64) {
-	for k := range atds {
+	for k, _ := range atds {
 		// catd := cbatch.FindOrCreate(atds[k].TargetFingerprint)
 		var catd *CompiledATD
 		i := cbatch.Find(atds[k].TargetFingerprint)
@@ -268,7 +267,7 @@ func (cbatch *CATDBatch) Insert(atds []AddsToDiscussionSignal, nowts int64) {
 }
 
 func (cbatch *CATDBatch) Find(targetfp string) int {
-	for k := range *cbatch {
+	for k, _ := range *cbatch {
 		if targetfp == (*cbatch)[k].TargetFingerprint {
 			return k
 		}
@@ -281,7 +280,7 @@ type CFGBatch []CompiledFG
 
 func (batch *CFGBatch) Insert(signals []FollowsGuidelinesSignal, nowts int64) {
 
-	for k := range signals {
+	for k, _ := range signals {
 		var compiledSignal *CompiledFG
 		i := batch.Find(signals[k].TargetFingerprint)
 		if i == -1 {
@@ -296,7 +295,7 @@ func (batch *CFGBatch) Insert(signals []FollowsGuidelinesSignal, nowts int64) {
 }
 
 func (batch *CFGBatch) Find(targetfp string) int {
-	for k := range *batch {
+	for k, _ := range *batch {
 		if targetfp == (*batch)[k].TargetFingerprint {
 			return k
 		}
@@ -308,7 +307,7 @@ func (batch *CFGBatch) Find(targetfp string) int {
 type CMABatch []CompiledMA
 
 func (batch *CMABatch) Insert(signals []ModActionsSignal, nowts int64) {
-	for k := range signals {
+	for k, _ := range signals {
 		var compiledSignal *CompiledMA
 		i := batch.Find(signals[k].TargetFingerprint)
 		if i == -1 {
@@ -323,7 +322,7 @@ func (batch *CMABatch) Insert(signals []ModActionsSignal, nowts int64) {
 }
 
 func (batch *CMABatch) Find(targetfp string) int {
-	for k := range *batch {
+	for k, _ := range *batch {
 		if targetfp == (*batch)[k].TargetFingerprint {
 			return k
 		}

@@ -7,22 +7,19 @@ import (
 	"aether-core/aether/frontend/beapiconsumer"
 	"aether-core/aether/frontend/clapiconsumer"
 	"aether-core/aether/frontend/festructs"
-
 	// "aether-core/aether/frontend/kvstore"
 	"aether-core/aether/io/api"
 	pbstructs "aether-core/aether/protos/mimapi"
 	"aether-core/aether/services/globals"
 	"aether-core/aether/services/logging"
 	"aether-core/aether/services/toolbox"
-
 	// "github.com/davecgh/go-spew/spew"
 	// "fmt"
 	"encoding/json"
+	"github.com/asdine/storm/q"
 	"strings"
 	"sync"
 	"time"
-
-	"github.com/asdine/storm/q"
 )
 
 var (
@@ -107,30 +104,27 @@ func DeleteStaleData(nowts int64) {
 	/*==================================================
 	=            Deletion from search index            =
 	==================================================*/
-	var bcs []festructs.BoardCarrier
-
+	bcs := []festructs.BoardCarrier{}
 	query.Find(&bcs)
-	for i := range bcs {
-		for j := range bcs[i].Boards {
+	for i, _ := range bcs {
+		for j, _ := range bcs[i].Boards {
 			bcs[i].Boards[j].DeleteFromSearchIndex()
 		}
 	}
-	var tcs []festructs.ThreadCarrier
-
+	tcs := []festructs.ThreadCarrier{}
 	query.Find(&tcs)
-	for i := range tcs {
-		for j := range tcs[i].Threads {
+	for i, _ := range tcs {
+		for j, _ := range tcs[i].Threads {
 			bcs[i].Threads[j].DeleteFromSearchIndex()
 		}
-		for j := range tcs[i].Posts {
+		for j, _ := range tcs[i].Posts {
 			bcs[i].Posts[j].DeleteFromSearchIndex()
 		}
 	}
-	var uhcs []festructs.UserHeaderCarrier
-
+	uhcs := []festructs.UserHeaderCarrier{}
 	query.Find(&uhcs)
-	for i := range uhcs {
-		for j := range uhcs[i].Users {
+	for i, _ := range uhcs {
+		for j, _ := range uhcs[i].Users {
 			uhcs[i].Users[j].DeleteFromSearchIndex()
 		}
 	}
@@ -165,7 +159,7 @@ func RefreshGlobalUserHeaders(newUserEntities []*pbstructs.Key, nowts int64, obs
 	*/
 	// toBeIndexed := festructs.CUserBatch{}
 	uhcBatch := festructs.UHCBatch(uhcs)
-	for k := range newUserEntities {
+	for k, _ := range newUserEntities {
 		if i := uhcBatch.Find(newUserEntities[k].GetProvable().GetFingerprint()); i != -1 {
 			// It already exists
 			uhcBatch[i].Users.InsertFromProtobuf([]*pbstructs.Key{newUserEntities[k]}, nowts)
@@ -205,7 +199,7 @@ func RefreshBoards(nowts int64, extantABs *festructs.AmbientBoardBatch, observab
 	bcBatch := festructs.BCBatch(bcs)
 	bcBatch.Insert(newBoardEntities)
 	wg := sync.WaitGroup{}
-	for k := range bcBatch {
+	for k, _ := range bcBatch {
 		wg.Add(1)
 		go RefreshBoard(bcBatch[k], &wg, extantABs, nowts)
 	}
@@ -236,7 +230,7 @@ func RefreshThreads(bc *festructs.BoardCarrier) {
 	newThreadEntities := beapiconsumer.GetThreads(bc.LastReferenced, globals.FrontendTransientConfig.RefresherCacheNowTimestamp, []string{}, bc.Fingerprint, false, false)
 	bc.Threads.InsertFromProtobuf(newThreadEntities)
 	wg := sync.WaitGroup{}
-	for k := range bc.Threads {
+	for k, _ := range bc.Threads {
 		wg.Add(1)
 		go RefreshThread(bc.Threads[k], bc, &wg)
 	}

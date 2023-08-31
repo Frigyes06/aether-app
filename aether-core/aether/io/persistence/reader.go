@@ -7,14 +7,12 @@ import (
 	"aether-core/aether/io/api"
 	"aether-core/aether/services/globals"
 	"aether-core/aether/services/logging"
-
 	// "aether-core/aether/services/toolbox"
 	"errors"
 	"fmt"
+	"github.com/jmoiron/sqlx"
 	"strconv"
 	"time"
-
-	"github.com/jmoiron/sqlx"
 )
 
 // ReadNode provides the ability to seek a specific node.
@@ -39,7 +37,7 @@ func ReadNode(fingerprint api.Fingerprint) (DbNode, error) {
 		rows.Close()
 	}
 	if len(n.Fingerprint) == 0 {
-		return n, fmt.Errorf("The node you have asked for could not be found. You asked for: %s", fingerprint)
+		return n, errors.New(fmt.Sprintf("The node you have asked for could not be found. You asked for: %s", fingerprint))
 	}
 	return n, nil
 }
@@ -69,7 +67,7 @@ func enforceReadValidity(
 		valid = true
 	}
 	if !valid {
-		return fmt.Errorf("You can either search for a time range, or for fingerprint(s). You can't do both or neither at the same time - you have to do one. Asked fingerprints: %#v, BeginTimestamp: %s, EndTimestamp: %s", fingerprints, strconv.Itoa(int(beginTimestamp)), strconv.Itoa(int(endTimestamp)))
+		return errors.New(fmt.Sprintf("You can either search for a time range, or for fingerprint(s). You can't do both or neither at the same time - you have to do one. Asked fingerprints: %#v, BeginTimestamp: %s, EndTimestamp: %s", fingerprints, strconv.Itoa(int(beginTimestamp)), strconv.Itoa(int(endTimestamp))))
 	}
 	return nil
 }
@@ -108,7 +106,7 @@ func SanitiseTimeRange(
 	}
 	// If the begin is newer than the end, flip. We haven't started to enforce limits yet, so the change here will be entirely coming from the remote.
 	if beginTimestamp > endTimestamp {
-		return beginTimestamp, endTimestamp, fmt.Errorf("Your BeginTimestamp is larger than your EndTimestamp. BeginTimestamp: %s, EndTimestamp: %s", strconv.Itoa(int(beginTimestamp)), strconv.Itoa(int(endTimestamp)))
+		return beginTimestamp, endTimestamp, errors.New(fmt.Sprintf("Your BeginTimestamp is larger than your EndTimestamp. BeginTimestamp: %s, EndTimestamp: %s", strconv.Itoa(int(beginTimestamp)), strconv.Itoa(int(endTimestamp))))
 	}
 	// Internal processing starts.
 
@@ -125,7 +123,7 @@ func SanitiseTimeRange(
 	}
 	//If beginTimestamp is in the future, return error.
 	if beginTimestamp > now {
-		return beginTimestamp, endTimestamp, fmt.Errorf("Your beginTimestamp is in the future. BeginTimestamp: %s, Now: %s", strconv.Itoa(int(beginTimestamp)), strconv.Itoa(int(now)))
+		return beginTimestamp, endTimestamp, errors.New(fmt.Sprintf("Your beginTimestamp is in the future. BeginTimestamp: %s, Now: %s", strconv.Itoa(int(beginTimestamp)), strconv.Itoa(int(now))))
 	}
 	// End of internal processing
 	// After we do these things, if we end up with a begin timestamp that is newer than the end, the end timestamp will be 'now'. This can happen in the case where both the start and end timestamps are within the cached period.
@@ -226,7 +224,7 @@ func Read(
 		result.Boards = entities
 		// Convert the result to []api.Provable
 
-		for i := range entities {
+		for i, _ := range entities {
 			provableArr = append(provableArr, &entities[i])
 		}
 
@@ -237,7 +235,7 @@ func Read(
 		}
 		result.Threads = entities
 		// Convert the result to []api.Provable
-		for i := range entities {
+		for i, _ := range entities {
 			provableArr = append(provableArr, &entities[i])
 		}
 	case "posts":
@@ -247,7 +245,7 @@ func Read(
 		}
 		result.Posts = entities
 		// Convert the result to []api.Provable
-		for i := range entities {
+		for i, _ := range entities {
 			provableArr = append(provableArr, &entities[i])
 		}
 
@@ -258,7 +256,7 @@ func Read(
 		}
 		result.Votes = entities
 		// Convert the result to []api.Provable
-		for i := range entities {
+		for i, _ := range entities {
 			provableArr = append(provableArr, &entities[i])
 		}
 	case "addresses":
@@ -270,7 +268,7 @@ func Read(
 		}
 		result.Keys = entities
 		// Convert the result to []api.Provable
-		for i := range entities {
+		for i, _ := range entities {
 			provableArr = append(provableArr, &entities[i])
 		}
 	case "truststates":
@@ -280,7 +278,7 @@ func Read(
 		}
 		result.Truststates = entities
 		// Convert the result to []api.Provable
-		for i := range entities {
+		for i, _ := range entities {
 			provableArr = append(provableArr, &entities[i])
 		}
 	}
@@ -298,7 +296,7 @@ func Read(
 
 func existsInEmbed(asked string, embeds []string) bool {
 	if len(embeds) > 0 {
-		for i := range embeds {
+		for i, _ := range embeds {
 			if embeds[i] == asked {
 				return true
 			}
@@ -316,7 +314,7 @@ func handleEmbeds(entities []api.Provable, result *api.Response, embeds []string
 			return err
 		}
 		result.Threads = thr
-		for i := range thr {
+		for i, _ := range thr {
 			firstEmbedCache = append(firstEmbedCache, &thr[i])
 		}
 
@@ -328,7 +326,7 @@ func handleEmbeds(entities []api.Provable, result *api.Response, embeds []string
 			return err
 		}
 		result.Posts = posts
-		for i := range posts {
+		for i, _ := range posts {
 			firstEmbedCache = append(firstEmbedCache, &posts[i])
 		}
 	}
@@ -338,7 +336,7 @@ func handleEmbeds(entities []api.Provable, result *api.Response, embeds []string
 			return err
 		}
 		result.Votes = votes
-		for i := range votes {
+		for i, _ := range votes {
 			firstEmbedCache = append(firstEmbedCache, &votes[i])
 		}
 	}
@@ -374,7 +372,7 @@ func ReadThreadEmbed(entities []api.Provable) ([]api.Thread, error) {
 	case *api.Board:
 		// Only defined for boards. No other entity has thread embeds.
 		entity = entity // Stop complaining
-		for i := range entities {
+		for i, _ := range entities {
 			entityFingerprints = append(entityFingerprints, entities[i].GetFingerprint())
 		}
 		query, args, err := sqlx.In("SELECT DISTINCT * FROM Threads WHERE Board IN (?);", entityFingerprints)
@@ -423,7 +421,7 @@ func ReadPostEmbed(entities []api.Provable) ([]api.Post, error) {
 	case *api.Thread:
 		// Only defined for threads. No other entity has post embeds.
 		entity = entity // Stop complaining
-		for i := range entities {
+		for i, _ := range entities {
 			entityFingerprints = append(entityFingerprints, entities[i].GetFingerprint())
 		}
 		query, args, err := sqlx.In("SELECT DISTINCT * FROM Posts WHERE Thread IN (?);", entityFingerprints)
@@ -472,7 +470,7 @@ func ReadVoteEmbed(entities []api.Provable) ([]api.Vote, error) {
 	case *api.Post:
 		// Only defined for posts. No other entity has vote embeds.
 		entity = entity // Stop complaining
-		for i := range entities {
+		for i, _ := range entities {
 			entityFingerprints = append(entityFingerprints, entities[i].GetFingerprint())
 		}
 		query, args, err := sqlx.In("SELECT DISTINCT * FROM Votes WHERE Target IN (?);", entityFingerprints)
@@ -517,12 +515,12 @@ func ReadKeyEmbed(entities []api.Provable, firstEmbedCache []api.Provable) ([]ap
 		return arr, nil
 	}
 	entities = append(entities, firstEmbedCache...)
-	for i := range entities {
+	for i, _ := range entities {
 		switch entity := entities[i].(type) {
 		// entity: typed API object.
 		case *api.Board:
 			entityOwners = append(entityOwners, entity.GetOwner())
-			for j := range entity.BoardOwners {
+			for j, _ := range entity.BoardOwners {
 				entityOwners = append(entityOwners, entity.BoardOwners[j].KeyFingerprint)
 			}
 		case *api.Thread, *api.Post, *api.Truststate:
@@ -640,7 +638,7 @@ func ReadDbBoards(
 		}
 	default:
 		logging.Logf(1, "The request you've made to ReadDbBoards was invalid. Fps: %v, Start: %v, End: %v", fingerprints, beginTimestamp, endTimestamp)
-		return dbArr, fmt.Errorf("The request you've made to ReadDbBoards was invalid. Fps: %v, Start: %v, End: %v All opts: %#v", fingerprints, beginTimestamp, endTimestamp, opts)
+		return dbArr, errors.New(fmt.Sprintf("The request you've made to ReadDbBoards was invalid. Fps: %v, Start: %v, End: %v All opts: %#v", fingerprints, beginTimestamp, endTimestamp, opts))
 	}
 	rows, err := globals.DbInstance.Queryx(query, args...)
 	if err != nil {
@@ -741,7 +739,7 @@ func ReadDbThreads(
 		}
 	default:
 		logging.Logf(1, "The request you've made to ReadDbThreads was invalid. Reqtype: %v, Fps: %v, Start: %v, End: %v", reqtyp, fingerprints, beginTimestamp, endTimestamp)
-		return dbArr, fmt.Errorf("The request you've made to ReadDbThreads was invalid. Fps: %v, Start: %v, End: %v", fingerprints, beginTimestamp, endTimestamp)
+		return dbArr, errors.New(fmt.Sprintf("The request you've made to ReadDbThreads was invalid. Fps: %v, Start: %v, End: %v", fingerprints, beginTimestamp, endTimestamp))
 	}
 	rows, err := globals.DbInstance.Queryx(query, args...)
 	if err != nil {
@@ -853,7 +851,7 @@ func ReadDbPosts(
 		}
 	default:
 		logging.Logf(1, "The request you've made to ReadDbPosts was invalid. Fps: %v, Start: %v, End: %v", fingerprints, beginTimestamp, endTimestamp)
-		return dbArr, fmt.Errorf("The request you've made to ReadDbPosts was invalid. Fps: %v, Start: %v, End: %v", fingerprints, beginTimestamp, endTimestamp)
+		return dbArr, errors.New(fmt.Sprintf("The request you've made to ReadDbPosts was invalid. Fps: %v, Start: %v, End: %v", fingerprints, beginTimestamp, endTimestamp))
 	}
 	rows, err := globals.DbInstance.Queryx(query, args...)
 	if err != nil {
@@ -998,7 +996,7 @@ func ReadDbVotes(
 		}
 	default:
 		logging.Logf(1, "The request you've made to ReadDbVotes was invalid. Fps: %v, Start: %v, End: %v, ReqType: %v", fingerprints, beginTimestamp, endTimestamp, reqtyp)
-		return dbArr, fmt.Errorf("The request you've made to ReadDbVotes was invalid. Fps: %v, Start: %v, End: %v ReqType: %v", fingerprints, beginTimestamp, endTimestamp, reqtyp)
+		return dbArr, errors.New(fmt.Sprintf("The request you've made to ReadDbVotes was invalid. Fps: %v, Start: %v, End: %v ReqType: %v", fingerprints, beginTimestamp, endTimestamp, reqtyp))
 	}
 	rows, err := globals.DbInstance.Queryx(query, args...)
 	if err != nil {
@@ -1097,7 +1095,7 @@ func readDbAddressesTimeRangeSearch(
 	} else if searchType == "timerange_lastsuccessfulsync" {
 		rangeSearchColumn = "LastSuccessfulSync"
 	} else {
-		return &dbArr, fmt.Errorf("You have provided an invalid time range search type. You provided: %s", searchType)
+		return &dbArr, errors.New(fmt.Sprintf("You have provided an invalid time range search type. You provided: %s", searchType))
 	}
 	query := fmt.Sprintf("SELECT DISTINCT * from Addresses WHERE (%s > ? AND %s < ?) ORDER BY %s DESC", rangeSearchColumn, rangeSearchColumn, rangeSearchColumn)
 	rows, err := globals.DbInstance.Queryx(query, beginTimestamp, endTs)
@@ -1117,11 +1115,10 @@ func readDbAddressesTimeRangeSearch(
 	return &dbArr, nil
 }
 
-// readAddressContainerResponse is a direct prepared response to a container generation request, whether be it for a cache generation or POST response generation.
+//readAddressContainerResponse is a direct prepared response to a container generation request, whether be it for a cache generation or POST response generation.
 func readAddressContainerResponse(beg, end api.Timestamp, addrType uint8, limit int) (*[]DbAddress, error) {
 	// Filter by time range given, sort by fixed elements, and limit the results to limit
-	var results []DbAddress
-
+	results := []DbAddress{}
 	q := "SELECT * FROM Addresses WHERE (LastSuccessfulPing > ? AND LastSuccessfulPing < ? AND AddressType = ?) ORDER BY LastSuccessfulSync DESC, LastSuccessfulPing DESC LIMIT ?"
 	r, err := globals.DbInstance.Queryx(q, beg, end, addrType, limit)
 	defer r.Close() // In case of premature exit.
@@ -1142,8 +1139,7 @@ func readAddressContainerResponse(beg, end api.Timestamp, addrType uint8, limit 
 }
 
 func readDBAddressesAll(isDesc bool) (*[]DbAddress, error) {
-	var results []DbAddress
-
+	results := []DbAddress{}
 	q := ""
 	if isDesc {
 		q = "SELECT * FROM Addresses ORDER BY LastSuccessfulSync DESC, LastSuccessfulPing DESC, LocalArrival DESC LIMIT ?"
@@ -1175,14 +1171,13 @@ func ReadDbAddresses(
 		live, err1 := readAddressContainerResponse(beg, end, 2, (limit/10)*8)
 		bs, err2 := readAddressContainerResponse(beg, end, 3, (limit / 10))
 		static, err3 := readAddressContainerResponse(beg, end, 255, (limit / 10))
-		var all []DbAddress
-
+		all := []DbAddress{}
 		all = append(all, (*live)...)
 		all = append(all, (*bs)...)
 		all = append(all, (*static)...)
 		if err1 != nil || err2 != nil || err3 != nil {
 			errs := []error{}
-			return &all, fmt.Errorf("Some errors appeared while trying to prepare this address response to a remote request. Errors: %#v", errs)
+			return &all, errors.New(fmt.Sprintf("Some errors appeared while trying to prepare this address response to a remote request. Errors: %#v", errs))
 		}
 		return &all, nil
 	} else if searchType == "basic" {
@@ -1303,7 +1298,7 @@ func ReadDbKeys(
 		}
 	default:
 		logging.Logf(1, "The request you've made to ReadDbKeys was invalid. Fps: %v, Start: %v, End: %v", fingerprints, beginTimestamp, endTimestamp)
-		return dbArr, fmt.Errorf("The request you've made to ReadDbKeys was invalid. Fps: %v, Start: %v, End: %v All opts: %#v", fingerprints, beginTimestamp, endTimestamp, opts)
+		return dbArr, errors.New(fmt.Sprintf("The request you've made to ReadDbKeys was invalid. Fps: %v, Start: %v, End: %v All opts: %#v", fingerprints, beginTimestamp, endTimestamp, opts))
 	}
 	rows, err := globals.DbInstance.Queryx(query, args...)
 	if err != nil {
@@ -1440,7 +1435,7 @@ func ReadDbTruststates(
 		}
 	default:
 		logging.Logf(1, "The request you've made to ReadDbTruststates was invalid. Fps: %v, Start: %v, End: %v, Opts: %#v", fingerprints, beginTimestamp, endTimestamp, opts)
-		return dbArr, fmt.Errorf("The request you've made to ReadDbTruststates was invalid. Fps: %v, Start: %v, End: %v, Opts: %#v", fingerprints, beginTimestamp, endTimestamp, opts)
+		return dbArr, errors.New(fmt.Sprintf("The request you've made to ReadDbTruststates was invalid. Fps: %v, Start: %v, End: %v, Opts: %#v", fingerprints, beginTimestamp, endTimestamp, opts))
 	}
 
 	rows, err := globals.DbInstance.Queryx(query, args...)

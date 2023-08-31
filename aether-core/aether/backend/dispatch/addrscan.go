@@ -8,11 +8,9 @@ import (
 	pers "aether-core/aether/io/persistence"
 	"aether-core/aether/services/globals"
 	"aether-core/aether/services/logging"
-
 	// "aether-core/aether/services/safesleep"
 	"errors"
 	"fmt"
-
 	// "github.com/pkg/errors"
 	// "strings"
 	"aether-core/aether/services/toolbox"
@@ -31,17 +29,16 @@ func getAllAddresses(isDesc bool) ([]api.Address, error) {
 	}
 	resp, err := pers.ReadAddresses("", "", 0, 0, 0, 0, 0, 0, searchType)
 	if err != nil {
-		fmt.Errorf("getAllAddresses in AddressScanner failed.", err)
+		errors.New(fmt.Sprintf("getAllAddresses in AddressScanner failed.", err))
 	}
 	return resp, nil
 }
 
 func filterByLastSuccessfulPing(addrs []api.Address, scanStart api.Timestamp) []api.Address {
-	var live []api.Address
-
+	live := []api.Address{}
 	cutoff := api.Timestamp(time.Unix(int64(scanStart), 0).Add(-2 * time.Minute).Unix())
 	// Cutoff is 2 minutes before the threshold, because our pinger accepts a node whose last successful ping was within 2 minutes as online.
-	for key := range addrs {
+	for key, _ := range addrs {
 		if addrs[key].LastSuccessfulPing >= cutoff {
 			live = append(live, addrs[key])
 		}
@@ -50,11 +47,9 @@ func filterByLastSuccessfulPing(addrs []api.Address, scanStart api.Timestamp) []
 }
 
 func filterByAddressType(addrType uint8, addrs []api.Address) ([]api.Address, []api.Address) {
-	var filteredAddrs []api.Address
-
-	var remainder []api.Address
-
-	for key := range addrs {
+	filteredAddrs := []api.Address{}
+	remainder := []api.Address{}
+	for key, _ := range addrs {
 		if addrs[key].Type == addrType {
 			filteredAddrs = append(filteredAddrs, addrs[key])
 		} else {
@@ -79,7 +74,7 @@ func updateAddrs(addrs []api.Address) ([]api.Address, error) {
 	updatedAddrs := Pinger(addrs)
 	err := pers.AddrTrustedInsert(&updatedAddrs)
 	if err != nil {
-		return []api.Address{}, fmt.Errorf("updateAddrs encountered an error in AddrTrustedInsert.", err)
+		return []api.Address{}, errors.New(fmt.Sprintf("updateAddrs encountered an error in AddrTrustedInsert.", err))
 	}
 	return updatedAddrs, nil
 }
@@ -218,7 +213,7 @@ func findOnlineNodesV2(count int, reqType, addrType int, excl *[]api.Address, re
 	logging.Logf(1, "Network scan complete within findOnlineNodes.")
 	addrs, err := getAllAddresses(true) // desc - last synced first primary, last pinged first secondary sort
 	if err != nil {
-		return []api.Address{}, fmt.Errorf("findOnlineNodes: getAllAddresses within this function failed.", err)
+		return []api.Address{}, errors.New(fmt.Sprintf("findOnlineNodes: getAllAddresses within this function failed.", err))
 	}
 	if addrType > -1 {
 		addrs, _ = filterByAddressType(uint8(addrType), addrs)
@@ -242,18 +237,17 @@ func findOnlineNodesV2(count int, reqType, addrType int, excl *[]api.Address, re
 	/*=====================================================================
 	=            Enforce exclusions for too-recently-connected            =
 	=====================================================================*/
-	var l []api.Address
-
+	l := []api.Address{}
 	if !reverse {
 		// If this is a non-reverse (normal) find online request, we use the reverse dispatcher exclusion queue.
-		for k := range liveNodes {
+		for k, _ := range liveNodes {
 			if !dpe.IsExcluded(liveNodes[k]) {
 				l = append(l, liveNodes[k])
 			}
 		}
 	} else {
 		// If this is a reverse find online request, we use the reverse dispatcher exclusion queue.
-		for k := range liveNodes {
+		for k, _ := range liveNodes {
 			if !reverseDpe.IsExcluded(liveNodes[k]) {
 				l = append(l, liveNodes[k])
 			}
@@ -269,11 +263,9 @@ func findOnlineNodesV2(count int, reqType, addrType int, excl *[]api.Address, re
 }
 
 func pickUnconnectedAddrs(addrs []api.Address) ([]api.Address, []api.Address) {
-	var nonconnecteds []api.Address
-
-	var connecteds []api.Address
-
-	for key := range addrs {
+	nonconnecteds := []api.Address{}
+	connecteds := []api.Address{}
+	for key, _ := range addrs {
 		if addrs[key].LastSuccessfulSync == 0 {
 			nonconnecteds = append(nonconnecteds, addrs[key])
 		} else {
@@ -286,7 +278,7 @@ func pickUnconnectedAddrs(addrs []api.Address) ([]api.Address, []api.Address) {
 func RefreshAddresses() error {
 	addrs, err := getAllAddresses(false) // asc - the oldest unconnected first
 	if err != nil {
-		return fmt.Errorf("RefreshAddresses: getAllAddresses within this function failed.", err)
+		return errors.New(fmt.Sprintf("RefreshAddresses: getAllAddresses within this function failed.", err))
 	}
 	updateAddrs(addrs)
 	return nil

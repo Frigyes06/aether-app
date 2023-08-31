@@ -12,21 +12,21 @@ This is the main entry point to the client app. See app.vue for the start logic,
 export {}
 
 // Electron IPC setup before doing anything else
-require('./services/eipc/eipc-renderer') // Register IPC events
-var ipc = require('../../node_modules/electron-better-ipc') // Register IPC caller
+const ipcRenderer = window.electronAPI.load_ipcRenderer()
+window.electronAPI.RegisterIPC()
 // ^ Heads up, there are some IPC events registered in this renderermain, too.
 
 // const unhandled = require('../../node_modules/electron-unhandled')
 // unhandled()
+const clapiserver = window.electronAPI.load_clapiserver()
+const feapiconsumer = window.electronAPI.load_feapiconsumer()
+const globalMethods = window.electronAPI.load_globalMethods()
 
-const clapiserver = require('./services/clapiserver/clapiserver')
-const feapiconsumer = require('./services/feapiconsumer/feapiconsumer')
-const globalMethods = require('./services/globals/methods')
 const clientAPIServerPort: number = clapiserver.StartClientAPIServer()
 
 console.log('attempting to call get frontend ready')
-ipc
-  .callMain('GetFrontendReady')
+ipcRenderer
+  .invoke('GetFrontendReady')
   .then(function (resp: any) {
     console.log('frontend ready response received')
     console.log(resp)
@@ -38,11 +38,11 @@ ipc
 
 /*----------  Call mainmain to ask software update state  ----------*/
 
-ipc.callMain('AskNewUpdateReady')
+ipcRenderer.send('AskNewUpdateReady')
 
 console.log('renderer client api server port: ', clientAPIServerPort)
-ipc
-  .callMain('SetClientAPIServerPort', clientAPIServerPort)
+ipcRenderer
+  .invoke('SetClientAPIServerPort', clientAPIServerPort)
   .then(function (feDaemonStarted: boolean) {
     if (!feDaemonStarted) {
       // It's an Electron refresh, not a cold start.
@@ -55,286 +55,154 @@ ipc
   })
 
 /*----------  Vue + its plugins  ----------*/
+const isDev = window.electronAPI.load_isDev()
+var Vue = window.electronAPI.load_Vue()
 
-const isDev = require('electron-is-dev')
-if (isDev) {
-  var Vue = require('../../node_modules/vue/dist/vue.js') // Production
-  Vue.config.devtools = true
-} else {
-  var Vue = require('../../node_modules/vue/dist/vue.min.js') // Production
-}
 // var Vue = require('../../node_modules/vue/dist/vue.js') // Development
-var VueRouter = require('../../node_modules/vue-router').default
+const VueRouter = window.electronAPI.load_VueRouter()
 
 Vue.use(VueRouter)
 
 // Register icons for our own use.
-var Icon = require('../../node_modules/vue-awesome')
+const Icon = window.electronAPI.load_Icon()
 Vue.component('icon', Icon)
 
 // Register the click-outside component
-var ClickOutside = require('../../node_modules/v-click-outside')
+var ClickOutside = window.electronAPI.load_ClickOutside()
 Vue.use(ClickOutside)
 
 /*----------  Third party dependencies  ----------*/
 
-var Mousetrap = require('../../node_modules/mousetrap')
-// var Spinner = require('../../node_modules/vue-simple-spinner')
+const Mousetrap = window.electronAPI.load_Mousetrap()
+//const Spinner = window.electronAPI.load_Spinner()
 
 /*----------  Components  ----------*/
 
 // Global component declarations - do it here once.
-Vue.component('a-app', require('./components/a-app.vue').default)
-Vue.component('a-header', require('./components/a-header.vue').default)
-Vue.component(
-  'a-header-icon',
-  require('./components/a-header-icon.vue').default
-)
-Vue.component('a-sidebar', require('./components/a-sidebar.vue').default)
-Vue.component(
-  'a-boardheader',
-  require('./components/a-boardheader.vue').default
-)
-Vue.component('a-tabs', require('./components/a-tabs.vue').default)
-Vue.component(
-  'a-thread-listitem',
-  require('./components/listitems/a-thread-listitem.vue').default
-)
-Vue.component(
-  'a-vote-action',
-  require('./components/a-vote-action.vue').default
-)
-Vue.component(
-  'a-thread-header-entity',
-  require('./components/a-thread-header-entity.vue').default
-)
-Vue.component('a-post', require('./components/a-post.vue').default)
-Vue.component(
-  'a-side-header',
-  require('./components/a-side-header.vue').default
-)
-Vue.component(
-  'a-breadcrumbs',
-  require('./components/a-breadcrumbs.vue').default
-)
-Vue.component('a-username', require('./components/a-username.vue').default)
-Vue.component('a-timestamp', require('./components/a-timestamp.vue').default)
-Vue.component(
-  'a-globalscopeheader',
-  require('./components/a-globalscopeheader.vue').default
-)
-Vue.component(
-  'a-board-listitem',
-  require('./components/listitems/a-board-listitem.vue').default
-)
-Vue.component('a-hashimage', require('./components/a-hashimage.vue').default)
-Vue.component('a-no-content', require('./components/a-no-content.vue').default)
-Vue.component('a-markdown', require('./components/a-markdown.vue').default)
-Vue.component(
-  'a-avatar-block',
-  require('./components/a-avatar-block.vue').default
-)
-Vue.component('a-composer', require('./components/a-composer.vue').default)
-Vue.component('a-ballot', require('./components/a-ballot.vue').default)
-Vue.component(
-  'a-progress-bar',
-  require('./components/a-progress-bar.vue').default
-)
-Vue.component(
-  'a-inflight-info',
-  require('./components/a-inflight-info.vue').default
-)
-Vue.component(
-  'a-info-marker',
-  require('./components/a-info-marker.vue').default
-)
-Vue.component('a-spinner', require('./components/a-spinner.vue').default)
-Vue.component('a-notfound', require('./components/a-notfound.vue').default)
-Vue.component('a-guidelight', require('./components/a-guidelight.vue').default)
-Vue.component(
-  'a-home-header',
-  require('./components/a-home-header.vue').default
-)
-Vue.component(
-  'a-popular-header',
-  require('./components/a-popular-header.vue').default
-)
-Vue.component('a-new-header', require('./components/a-new-header.vue').default)
-Vue.component(
-  'a-notifications-icon',
-  require('./components/a-notifications-icon.vue').default
-)
-Vue.component(
-  'a-sfwlist-icon',
-  require('./components/a-sfwlist-icon.vue').default
-)
-Vue.component(
-  'a-notification-entity',
-  require('./components/a-notification-entity.vue').default
-)
-Vue.component(
-  'a-main-app-loader',
-  require('./components/a-main-app-loader.vue').default
-)
-Vue.component(
-  'a-global-header',
-  require('./components/a-global-header.vue').default
-)
-Vue.component('a-fin-puck', require('./components/a-fin-puck.vue').default)
-Vue.component(
-  'a-bootstrapper',
-  require('./components/a-bootstrapper.vue').default
-)
-Vue.component(
-  'a-fingerprint',
-  require('./components/a-fingerprint.vue').default
-)
-Vue.component(
-  'a-settings-block',
-  require('./components/a-settings-block.vue').default
-)
-Vue.component(
-  'a-software-update-icon',
-  require('./components/a-software-update-icon.vue').default
-)
-Vue.component(
-  'a-patreon-button',
-  require('./components/a-patreon-button.vue').default
-)
-Vue.component(
-  'a-crypto-fund-button',
-  require('./components/a-crypto-fund-button.vue').default
-)
-Vue.component('a-boardname', require('./components/a-boardname.vue').default)
-Vue.component(
-  'a-search-icon',
-  require('./components/a-search-icon.vue').default
-)
-Vue.component(
-  'a-search-header',
-  require('./components/a-search-header.vue').default
-)
-Vue.component(
-  'a-user-listitem',
-  require('./components/listitems/a-user-listitem.vue').default
-)
-Vue.component(
-  'a-post-listitem',
-  require('./components/listitems/a-post-listitem.vue').default
-)
-Vue.component('a-threadname', require('./components/a-threadname.vue').default)
-Vue.component('a-link', require('./components/a-link.vue').default)
+Vue.component('a-app', window.electronAPI.load_a_app())
+Vue.component('a-header', window.electronAPI.load_a_header())
+Vue.component('a-header-icon', window.electronAPI.load_a_header_icon())
+Vue.component('a-sidebar', window.electronAPI.load_a_sidebar())
+Vue.component('a-boardheader', window.electronAPI.load_a_boardheader())
+Vue.component('a-tabs', window.electronAPI.load_a_tabs())
+Vue.component('a-thread-listitem', window.electronAPI.load_a_thread_listitem())
+Vue.component('a-vote-action', window.electronAPI.load_a_vote_action())
+Vue.component('a-thread-header-entity', window.electronAPI.load_a_thread_header_entity())
+Vue.component('a-post', window.electronAPI.load_a_post())
+Vue.component('a-side-header', window.electronAPI.load_a_side_header())
+Vue.component('a-breadcrumbs', window.electronAPI.load_a_breadcrumbs())
+Vue.component('a-username', window.electronAPI.load_a_username())
+Vue.component('a-timestamp', window.electronAPI.load_a_timestamp())
+Vue.component('a-globalscopeheader', window.electronAPI.load_a_globalscopeheader())
+Vue.component('a-board-listitem', window.electronAPI.load_a_board_listitem())
+Vue.component('a-hashimage', window.electronAPI.load_a_hashimage())
+Vue.component('a-no-content', window.electronAPI.load_a_no_content())
+Vue.component('a-markdown', window.electronAPI.load_a_markdown())
+Vue.component('a-avatar-block', window.electronAPI.load_a_avatar_block())
+Vue.component('a-composer', window.electronAPI.load_a_composer())
+Vue.component('a-ballot', window.electronAPI.load_a_ballot())
+Vue.component('a-progress-bar', window.electronAPI.load_a_progress_bar())
+Vue.component('a-inflight-info', window.electronAPI.load_a_inflight_info())
+Vue.component('a-info-marker', window.electronAPI.load_a_info_marker())
+Vue.component('a-spinner', window.electronAPI.load_a_spinner())
+Vue.component('a-notfound', window.electronAPI.load_a_notfound())
+Vue.component('a-guidelight', window.electronAPI.load_a_guidelight())
+Vue.component('a-home-header', window.electronAPI.load_a_home_header())
+Vue.component('a-popular-header', window.electronAPI.load_a_popular_header())
+Vue.component('a-new-header', window.electronAPI.load_a_new_header())
+Vue.component('a-notifications-icon', window.electronAPI.load_a_notifications_icon())
+Vue.component('a-sfwlist-icon', window.electronAPI.load_a_sfwlist_icon())
+Vue.component('a-notification-entity', window.electronAPI.load_a_notification_entity())
+Vue.component('a-main-app-loader', window.electronAPI.load_a_main_app_loader())
+Vue.component('a-global-header', window.electronAPI.load_a_global_header())
+Vue.component('a-fin-puck', window.electronAPI.load_a_fin_puck())
+Vue.component('a-bootstrapper', window.electronAPI.load_a_bootstrapper())
+Vue.component('a-fingerprint', window.electronAPI.load_a_fingerprint())
+Vue.component('a-settings-block', window.electronAPI.load_a_settings_block())
+Vue.component('a-software-update-icon', window.electronAPI.load_a_software_update_icon())
+Vue.component('a-patreon-button', window.electronAPI.load_a_patreon_button())
+Vue.component('a-crypto-fund-button', window.electronAPI.load_a_crypto_fund_button())
+Vue.component('a-boardname', window.electronAPI.load_a_boardname())
+Vue.component('a-search-icon', window.electronAPI.load_a_search_icon())
+Vue.component('a-search-header', window.electronAPI.load_a_search_header())
+Vue.component('a-user-listitem', window.electronAPI.load_a_user_listitem())
+Vue.component('a-post-listitem', window.electronAPI.load_a_post_listitem())
+Vue.component('a-threadname', window.electronAPI.load_a_threadname())
+Vue.component('a-link', window.electronAPI.load_a_link())
 
 /*----------  Third party components  ----------*/
 
-Vue.component(
-  'vue-simple-spinner',
-  require('../../node_modules/vue-simple-spinner')
-)
+Vue.component('vue-simple-spinner', window.electronAPI.load_vue_simple_spinner())
 
 /*----------  Places  ----------*/
 
-const Home = require('./components/locations/home.vue').default
-const Popular = require('./components/locations/popular.vue').default
-const New = require('./components/locations/new.vue').default
+const Home = window.electronAPI.load_home()
+const Popular = window.electronAPI.load_popular()
+const New = window.electronAPI.load_new()
 
 /*----------  Global scope (whole network, i.e. list of boards)  ----------*/
-const GlobalScope = require('./components/locations/globalscope.vue').default
-const GlobalRoot =
-  require('./components/locations/globalscope/globalroot.vue').default
-const GlobalSubbed =
-  require('./components/locations/globalscope/subbedroot.vue').default
+const GlobalScope = window.electronAPI.load_global_scope()
+const GlobalRoot = window.electronAPI.load_global_root()
+const GlobalSubbed = window.electronAPI.load_global_subbed()
 
 /*----------  Board scope (board entity + list of threads)  ----------*/
-const NewBoard =
-  require('./components/locations/globalscope/newboard.vue').default
-const BoardScope = require('./components/locations/boardscope.vue').default
-const BoardRoot =
-  require('./components/locations/boardscope/boardroot.vue').default
-const BoardInfo =
-  require('./components/locations/boardscope/boardinfo.vue').default
-const ModActivity =
-  require('./components/locations/boardscope/modactivity.vue').default
-const Elections =
-  require('./components/locations/boardscope/elections.vue').default
-const Reports = require('./components/locations/boardscope/reports.vue').default
+const NewBoard = window.electronAPI.load_new_board()
+const BoardScope = window.electronAPI.load_board_scope()
+const BoardRoot = window.electronAPI.load_board_root()
+const BoardInfo = window.electronAPI.load_board_info()
+const ModActivity = window.electronAPI.load_mod_activity()  
+const Elections = window.electronAPI.load_elections()
+const Reports = window.electronAPI.load_reports()
 
 /*----------  Thread scope (thread entity + list of posts)  ----------*/
-const NewThread =
-  require('./components/locations/boardscope/newthread.vue').default
-const ThreadScope = require('./components/locations/threadscope.vue').default
+const NewThread = window.electronAPI.load_new_thread()
+const ThreadScope = window.electronAPI.load_thread_scope()
 
 /*----------  Settings scope  ----------*/
-const SettingsScope =
-  require('./components/locations/settingsscope.vue').default
-const SettingsRoot =
-  require('./components/locations/settingsscope/settingsroot.vue').default
-const Defaults =
-  require('./components/locations/settingsscope/defaults.vue').default
-const Shortcuts =
-  require('./components/locations/settingsscope/shortcuts.vue').default
-const AdvancedSettings =
-  require('./components/locations/settingsscope/advancedsettings.vue').default
-const About = require('./components/locations/settingsscope/about.vue').default
-const Membership =
-  require('./components/locations/settingsscope/membership.vue').default
-const Changelog =
-  require('./components/locations/settingsscope/changelog.vue').default
-const AdminsQuickstart =
-  require('./components/locations/settingsscope/adminsquickstart.vue').default
-const Intro = require('./components/locations/settingsscope/intro.vue').default
-const NewUser =
-  require('./components/locations/settingsscope/newuser.vue').default
-const SFWList =
-  require('./components/locations/settingsscope/sfwlist.vue').default
-const Modship =
-  require('./components/locations/settingsscope/modship.vue').default
-const Namemint =
-  require('./components/locations/settingsscope/namemint.vue').default
+const SettingsScope = window.electronAPI.load_settings_scope()
+const SettingsRoot = window.electronAPI.load_settings_root()
+const Defaults = window.electronAPI.load_defaults()
+const Shortcuts = window.electronAPI.load_shortcuts()  
+const AdvancedSettings = window.electronAPI.load_advanced_settings()  
+const About = window.electronAPI.load_about()
+const Membership = window.electronAPI.load_membership()
+const Changelog = window.electronAPI.load_changelog()
+const AdminsQuickstart = window.electronAPI.load_admins_quickstart()
+const Intro = window.electronAPI.load_intro()
+const NewUser = window.electronAPI.load_new_user()
+const SFWList = window.electronAPI.load_sfw_list()
+const Modship = window.electronAPI.load_modship()
+const Namemint = window.electronAPI.load_name_mint()
+  
 
 /*----------  User scope  ----------*/
-const UserScope = require('./components/locations/userscope.vue').default
-const UserRoot =
-  require('./components/locations/userscope/userroot.vue').default
-const UserBoards =
-  require('./components/locations/userscope/userboards.vue').default
-const UserThreads =
-  require('./components/locations/userscope/userthreads.vue').default
-const UserPosts =
-  require('./components/locations/userscope/userposts.vue').default
-const Notifications =
-  require('./components/locations/userscope/notifications.vue').default
+const UserScope = window.electronAPI.load_user_scope()
+const UserRoot = window.electronAPI.load_user_root()  
+const UserBoards = window.electronAPI.load_user_boards()  
+const UserThreads = window.electronAPI.load_user_threads()
+const UserPosts = window.electronAPI.load_user_posts()
+const Notifications = window.electronAPI.load_notifications()
 
 /*----------  Status scope  ----------*/
-
-const Status = require('./components/locations/status.vue').default
+const Status = window.electronAPI.load_status()
 
 /*----------  Onboarding scope  ----------*/
 
-const OnboardScope = require('./components/locations/onboardscope.vue').default
-const OnboardRoot =
-  require('./components/locations/onboardscope/onboardroot.vue').default
-const Onboard1 =
-  require('./components/locations/onboardscope/onboard1.vue').default
-const Onboard2 =
-  require('./components/locations/onboardscope/onboard2.vue').default
-const Onboard3 =
-  require('./components/locations/onboardscope/onboard3.vue').default
-const Onboard4 =
-  require('./components/locations/onboardscope/onboard4.vue').default
-const Onboard5 =
-  require('./components/locations/onboardscope/onboard5.vue').default
-const Onboard6 =
-  require('./components/locations/onboardscope/onboard6.vue').default
+const OnboardScope = window.electronAPI.load_onboard_scope()
+const OnboardRoot = window.electronAPI.load_onboard_root()
+const Onboard1 = window.electronAPI.load_onboard1() 
+const Onboard2 = window.electronAPI.load_onboard2()
+const Onboard3 = window.electronAPI.load_onboard3()
+const Onboard4 = window.electronAPI.load_onboard4()
+const Onboard5 = window.electronAPI.load_onboard5()
+const Onboard6 = window.electronAPI.load_onboard6()
 
 /*----------  Search scope (search communities, content, users)  ----------*/
-const SearchScope = require('./components/locations/searchscope.vue').default
-const SearchCommunity =
-  require('./components/locations/searchscope/communitysearch.vue').default
-const SearchContent =
-  require('./components/locations/searchscope/contentsearch.vue').default
-const SearchUser =
-  require('./components/locations/searchscope/usersearch.vue').default
+const SearchScope = window.electronAPI.load_search_scope()
+const SearchCommunity = window.electronAPI.load_search_community()
+const SearchContent = window.electronAPI.load_search_content()
+const SearchUser = window.electronAPI.load_search_user()
+  
 /*----------  Routes  ----------*/
 
 const routes = [
@@ -528,7 +396,7 @@ const router = new VueRouter({
 // This keeps track of history, so we can appropriately disable back / forward buttons as needed.
 // router.afterEach(HistoryWriter)
 
-const Store = require('./store').default
+const Store = window.electronAPI.load_store()
 
 router.beforeEach(function (to: any, {}, next: any) {
   if (
@@ -555,11 +423,11 @@ new Vue({
   router: router,
   store: Store,
   mounted(this: any) {
-    ipc.callMain('SetRendererReady', true)
+    ipcRenderer.invoke('SetRendererReady', true)
   },
 })
 
-let Sync = require('../../node_modules/vuex-router-sync').sync
+let Sync = window.electronAPI.load_sync()
 Sync(Store, router)
 /*
 ^ It adds a route module into the store, which contains the state representing the current route:
@@ -610,16 +478,16 @@ Mousetrap.bind('mod+/', function () {
 /*
 These are here instead of eipc/eipc-renderer because they do require access to things that are instantiated here, such as router, and there is no way to get to them without importing the main. Importing main is not an option. So these should be here until I split the router into its own service file that is imported separately. That way, eipc import from there, and not from main.
 */
-ipc.answerMain('RouteTo', function (route: string) {
+window.electronAPI.RouteTo(function (route: string) {
   router.push(route)
   return
 })
 
-ipc.answerMain('FullscreenState', function (isFullscreen: boolean) {
+window.electronAPI.FullscreenState(function (isFullscreen: boolean) {
   Store.state.appIsFullscreen = isFullscreen
 })
 
-ipc.answerMain('NewUpdateReady', function (newUpdateReady: boolean) {
+window.electronAPI.NewUpdateReady(function (newUpdateReady: boolean) {
   Store.state.newUpdateReady = newUpdateReady
 })
 
@@ -631,9 +499,9 @@ module.exports = { router: router }
 =            Spell checker             =
 ========================================*/
 // const HunspellAsm = require('hunspell-asm')
-const ElectronHunspell = require('electron-hunspell')
-const path = require('path')
-const fs = require('fs')
+const ElectronHunspell = window.electronAPI.load_electron_hunspell()
+const path = window.electronAPI.load_path()
+const fs = window.electronAPI.load_fs()
 
 ElectronHunspell.enableLogger(console)
 

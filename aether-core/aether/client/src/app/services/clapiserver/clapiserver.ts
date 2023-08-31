@@ -2,14 +2,15 @@
 // This file is the grpc server we want to use to talk to the frontend.
 
 export {} // This says this file is a module, not a script.
-
+console.log(window.electronAPI)
 // Imports
-const grpc = require('grpc')
+//const grpc = window.electronAPI.load_grpc()
+const grpc = require('@grpc/grpc-js')
 // const resolve = require('path').resolve
 // let globals = require('../globals/globals')
+//const feapiconsumer = window.electronAPI.load_feapiconsumer()
 const feapiconsumer = require('../feapiconsumer/feapiconsumer')
-var ipc = require('../../../../node_modules/electron-better-ipc')
-var vuexStore = require('../../store/index').default
+var vuexStore = window.electronAPI.load_vuexStore()
 
 // // Load the proto file
 // const proto = grpc.load({
@@ -17,8 +18,8 @@ var vuexStore = require('../../store/index').default
 //   root: resolve(__dirname, '../protos')
 // }).clapi
 
-var messages = require('../../../../../protos/clapi/clapi_pb.js')
-var services = require('../../../../../protos/clapi/clapi_grpc_pb')
+var messages = window.electronAPI.protoload_messages()
+var services = window.electronAPI.protoload_services()
 
 /**
  Client-side GRPC server so that the frontend can talk to the client. This is useful at the first start where the Frontend needs to start its own GRPC server and return its address to the client.
@@ -58,9 +59,9 @@ function FrontendReady(req: any, callback: any) {
   let r = req.request.toObject()
   console.log('frontend ready at: ', r.address, ':', r.port)
   // globals.FrontendReady = true
-  ipc.callMain('SetFrontendReady', true)
+  window.electronAPI.SetFrontendReady(true)
   // globals.FrontendAPIPort = req.request.port
-  ipc.callMain('SetFrontendAPIPort', r.port)
+  window.electronAPI.SetFrontendAPIPort(r.port)
   feapiconsumer.Initialise()
   let resp = new messages.FEReadyResponse()
   callback(null, resp)
@@ -135,7 +136,7 @@ function SendOnboardCompleteStatus(req: any, callback: any) {
     - If the FE response is empty, this is a first-ever boot.
     - If the FE response isn't empty, but they're not the same, this is the first start after a version upgrade.
   */
-  let versionAndBuild = require('electron').remote.app.getVersion()
+  let versionAndBuild = window.electronAPI.get_version()
   let firstEverOpen = false
   let firstOpenAfterSuccessfulUpdate = false
   feapiconsumer.SendClientVersion(versionAndBuild, function (resp: any) {
@@ -153,15 +154,15 @@ function SendOnboardCompleteStatus(req: any, callback: any) {
       This logic runs only if the onboarding is complete. This means the new version first run bit won't be set if the onboarding isn't done - there is no reason to ever show the banner on changelog which says it has new tricks, because the user hasn't seen the old 'tricks' yet.
       */
       if (firstEverOpen) {
-        const metrics = require('../metrics/metrics')()
+        const metrics = window.electronAPI.metrics()()
         metrics.SendRaw('App first-ever opened')
         return
       }
       if (firstOpenAfterSuccessfulUpdate) {
-        const metrics = require('../metrics/metrics')()
+        const metrics = window.electronAPI.metrics()()
         metrics.SendRaw('App update successful')
         vuexStore.dispatch('setFirstRunAfterUpdateState', true)
-        var router = require('../../renderermain').router
+        var router = window.electronAPI.get_main_router()
         router.push('/changelog')
       } else {
         vuexStore.dispatch('setFirstRunAfterUpdateState', false)

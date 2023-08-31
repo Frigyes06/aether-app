@@ -22,7 +22,6 @@
 </template>
 
 <script lang="ts">
-var ipc = require('../../../../../node_modules/electron-better-ipc')
 export default {
   name: 'onboard5',
   data() {
@@ -33,7 +32,7 @@ export default {
   },
   methods: {
     quitApp(this: any) {
-      ipc.callMain('QuitApp')
+      window.electronAPI.QuitApp()
     },
   },
 }

@@ -9,9 +9,7 @@ import (
 	"aether-core/aether/services/logging"
 	"aether-core/aether/services/toolbox"
 	"fmt"
-
 	"golang.org/x/crypto/ed25519"
-
 	// "github.com/davecgh/go-spew/spew"
 	"aether-core/aether/services/globals"
 	"encoding/json"
@@ -484,24 +482,23 @@ type ApiResponse struct {
 
 // GetProvables gets all provables in an ApiResponse.
 func (r *ApiResponse) GetProvables() *[]Provable {
-	var p []Provable
-
-	for key := range r.ResponseBody.Boards {
+	p := []Provable{}
+	for key, _ := range r.ResponseBody.Boards {
 		p = append(p, Provable(&r.ResponseBody.Boards[key]))
 	}
-	for key := range r.ResponseBody.Threads {
+	for key, _ := range r.ResponseBody.Threads {
 		p = append(p, Provable(&r.ResponseBody.Threads[key]))
 	}
-	for key := range r.ResponseBody.Posts {
+	for key, _ := range r.ResponseBody.Posts {
 		p = append(p, Provable(&r.ResponseBody.Posts[key]))
 	}
-	for key := range r.ResponseBody.Votes {
+	for key, _ := range r.ResponseBody.Votes {
 		p = append(p, Provable(&r.ResponseBody.Votes[key]))
 	}
-	for key := range r.ResponseBody.Keys {
+	for key, _ := range r.ResponseBody.Keys {
 		p = append(p, Provable(&r.ResponseBody.Keys[key]))
 	}
-	for key := range r.ResponseBody.Truststates {
+	for key, _ := range r.ResponseBody.Truststates {
 		p = append(p, Provable(&r.ResponseBody.Truststates[key]))
 	}
 	return &p
@@ -527,8 +524,7 @@ func (r *ApiResponse) Dump() error {
 
 // Verify verifies all items and flags them appropriately in a response.
 func (r *ApiResponse) Verify() []error {
-	var errs []error
-
+	errs := []error{}
 	// First of all, run boundary check on the apiresponse. This does NOT check for the .Address field, neither does it check the entities contained within. We'll do those afterwards.
 	boundsOk, err := r.CheckBounds()
 	if len(r.ResponseBody.PostIndexes) > 0 && boundsOk {
@@ -537,21 +533,21 @@ func (r *ApiResponse) Verify() []error {
 		fmt.Println("this api response has post indexes in it and it did not verify.")
 	}
 	if err != nil {
-		return []error{fmt.Errorf("This ApiResponse failed the boundary check for its general structure (not for its contents -- it didn't come to that.) Error: %#v, ApiResponse: %#v", err, r)}
+		return []error{errors.New(fmt.Sprintf("This ApiResponse failed the boundary check for its general structure (not for its contents -- it didn't come to that.) Error: %#v, ApiResponse: %#v", err, r))}
 	}
 	if !boundsOk {
 		// logging.LogCrash("yo")
-		return []error{fmt.Errorf("This ApiResponse failed the boundary check for its general structure (not for its contents -- it didn't come to that.) ApiResponse: %#v", r)}
+		return []error{errors.New(fmt.Sprintf("This ApiResponse failed the boundary check for its general structure (not for its contents -- it didn't come to that.) ApiResponse: %#v", r))}
 	}
 	remoteAddrOk, err := r.Address.CheckBounds()
 	if err != nil {
 		return []error{err}
 	}
 	if !remoteAddrOk {
-		return []error{fmt.Errorf("This ApiResponse's remote Address failed the boundary check. ApiResponse.Address: %#v", r.Address)}
+		return []error{errors.New(fmt.Sprintf("This ApiResponse's remote Address failed the boundary check. ApiResponse.Address: %#v", r.Address))}
 	}
 	// This is all the verification we need for addresses - just a bounds check. It does not go into the more involved Verify() flow.
-	for key := range r.ResponseBody.Addresses { // this is a concrete type..
+	for key, _ := range r.ResponseBody.Addresses { // this is a concrete type..
 		err := Verify(&r.ResponseBody.Addresses[key])
 		if err != nil {
 			errs = append(errs, err)
@@ -586,8 +582,7 @@ func (r *ApiResponse) ToJSON() ([]byte, error) {
 
 func (r *ApiResponse) Prefill() {
 	subprotsAsShims := globals.BackendConfig.GetServingSubprotocols()
-	var subprotsSupported []Subprotocol
-
+	subprotsSupported := []Subprotocol{}
 	for _, val := range subprotsAsShims {
 		subprotsSupported = append(subprotsSupported, Subprotocol(val))
 	}
@@ -936,37 +931,37 @@ func (r *Response) Insert(r2 *Response) {
 func (r *Response) IndexOf(item Provable) int {
 	switch entity := item.(type) {
 	case *Board:
-		for key := range r.Boards {
+		for key, _ := range r.Boards {
 			if r.Boards[key].Fingerprint == entity.Fingerprint {
 				return key
 			}
 		}
 	case *Thread:
-		for key := range r.Threads {
+		for key, _ := range r.Threads {
 			if r.Threads[key].Fingerprint == entity.Fingerprint {
 				return key
 			}
 		}
 	case *Post:
-		for key := range r.Posts {
+		for key, _ := range r.Posts {
 			if r.Posts[key].Fingerprint == entity.Fingerprint {
 				return key
 			}
 		}
 	case *Vote:
-		for key := range r.Votes {
+		for key, _ := range r.Votes {
 			if r.Votes[key].Fingerprint == entity.Fingerprint {
 				return key
 			}
 		}
 	case *Key:
-		for key := range r.Keys {
+		for key, _ := range r.Keys {
 			if r.Keys[key].Fingerprint == entity.Fingerprint {
 				return key
 			}
 		}
 	case *Truststate:
-		for key := range r.Truststates {
+		for key, _ := range r.Truststates {
 			if r.Truststates[key].Fingerprint == entity.Fingerprint {
 				return key
 			}
@@ -1010,7 +1005,7 @@ func (r *Response) RemoveByIndex(i int, entityType string) {
 }
 
 func isInIndexSlice(idx int, idxs []int) bool {
-	for key := range idxs {
+	for key, _ := range idxs {
 		if idx == idxs[key] {
 			idxs = append(idxs[0:key], idxs[key+1:len(idxs)]...)
 			return true
@@ -1030,9 +1025,8 @@ func (r *Response) MassRemoveByIndex(idxs []int, entityType string) {
 			r.Boards = []Board{}
 			return
 		}
-		var retained []Board
-
-		for key := range r.Boards {
+		retained := []Board{}
+		for key, _ := range r.Boards {
 			if !isInIndexSlice(key, idxs) {
 				retained = append(retained, r.Boards[key])
 			}
@@ -1043,9 +1037,8 @@ func (r *Response) MassRemoveByIndex(idxs []int, entityType string) {
 			r.Threads = []Thread{}
 			return
 		}
-		var retained []Thread
-
-		for key := range r.Threads {
+		retained := []Thread{}
+		for key, _ := range r.Threads {
 			if !isInIndexSlice(key, idxs) {
 				retained = append(retained, r.Threads[key])
 			}
@@ -1056,9 +1049,8 @@ func (r *Response) MassRemoveByIndex(idxs []int, entityType string) {
 			r.Posts = []Post{}
 			return
 		}
-		var retained []Post
-
-		for key := range r.Posts {
+		retained := []Post{}
+		for key, _ := range r.Posts {
 			if !isInIndexSlice(key, idxs) {
 				retained = append(retained, r.Posts[key])
 			}
@@ -1069,9 +1061,8 @@ func (r *Response) MassRemoveByIndex(idxs []int, entityType string) {
 			r.Votes = []Vote{}
 			return
 		}
-		var retained []Vote
-
-		for key := range r.Votes {
+		retained := []Vote{}
+		for key, _ := range r.Votes {
 			if !isInIndexSlice(key, idxs) {
 				retained = append(retained, r.Votes[key])
 			}
@@ -1082,9 +1073,8 @@ func (r *Response) MassRemoveByIndex(idxs []int, entityType string) {
 			r.Keys = []Key{}
 			return
 		}
-		var retained []Key
-
-		for key := range r.Keys {
+		retained := []Key{}
+		for key, _ := range r.Keys {
 			if !isInIndexSlice(key, idxs) {
 				retained = append(retained, r.Keys[key])
 			}
@@ -1095,9 +1085,8 @@ func (r *Response) MassRemoveByIndex(idxs []int, entityType string) {
 			r.Truststates = []Truststate{}
 			return
 		}
-		var retained []Truststate
-
-		for key := range r.Truststates {
+		retained := []Truststate{}
+		for key, _ := range r.Truststates {
 			if !isInIndexSlice(key, idxs) {
 				retained = append(retained, r.Truststates[key])
 			}

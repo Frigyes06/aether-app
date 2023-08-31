@@ -8,6 +8,7 @@ import (
 	"aether-core/aether/services/signaturing"
 	"aether-core/aether/services/toolbox"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -33,7 +34,7 @@ This package handles any data that gets saved to the user profile. This is impor
 // 0) UTILITY FUNCTIONS
 
 func invalidDataError(input interface{}) error {
-	return fmt.Errorf("An invalid value for this setting was provided by the user / application (in Set) or by the storage backend (in Get). Value provided: %#v", input)
+	return errors.New(fmt.Sprintf("An invalid value for this setting was provided by the user / application (in Set) or by the storage backend (in Get). Value provided: %#v", input))
 }
 
 // Maximums
@@ -4115,7 +4116,7 @@ func EstablishBackendConfig() (*BackendConfig, error) {
 		configJson, _ := folder.ReadFile("backend/backend_config.json")
 		err := json.Unmarshal(configJson, &bc)
 		if err != nil || fmt.Sprintf("%#v", string(configJson)) == "\"{}\"" {
-			return &bc, fmt.Errorf("Back-end configuration file is corrupted. Please fix the configuration file, or delete it. If deleted a new configuration will be generated with default values. Error: %#v, ConfigJson: %#v", err, string(configJson))
+			return &bc, errors.New(fmt.Sprintf("Back-end configuration file is corrupted. Please fix the configuration file, or delete it. If deleted a new configuration will be generated with default values. Error: %#v, ConfigJson: %#v", err, string(configJson)))
 		}
 	}
 	// Folder is nil - the configuration file in question does not exist. Ask to create.
@@ -4136,7 +4137,7 @@ func EstablishFrontendConfig() (*FrontendConfig, error) {
 		configJson, _ := folder.ReadFile("frontend/frontend_config.json")
 		err := json.Unmarshal(configJson, &fc)
 		if err != nil || fmt.Sprintf("%#v", string(configJson)) == "\"{}\"" {
-			return &fc, fmt.Errorf("Front-end configuration file is corrupted. Please fix the configuration file, or delete it. If deleted a new configuration will be generated with default values. Error: %#v, ConfigJson: %#v", err, string(configJson))
+			return &fc, errors.New(fmt.Sprintf("Front-end configuration file is corrupted. Please fix the configuration file, or delete it. If deleted a new configuration will be generated with default values. Error: %#v, ConfigJson: %#v", err, string(configJson)))
 		}
 	}
 	// Folder is nil - the configuration file in question does not exist. Ask to create.
