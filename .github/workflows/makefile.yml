@@ -32,6 +32,7 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '14.21.3'
+    - run: npm install -g npm@latest
     
     - name: Set up GCC
       uses: egor-tensin/setup-gcc@v1
