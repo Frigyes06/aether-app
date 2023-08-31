@@ -38,7 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 // Imports
-var grpc = require('grpc');
+var grpc = require('@grpc/grpc-js');
 // const resolve = require('path').resolve
 // Consts
 // const proto = grpc.load({

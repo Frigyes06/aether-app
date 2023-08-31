@@ -42,7 +42,7 @@
     "dotenv": "8.0.0",
     "electron": "^25.3.1",
     "electron-builder": "^24.4.0",
-    "electron-notarize": "^1.2.2",
+    "@electron/notarize": "^1.2.2",
     "file-loader": "^6.2.0",
     "resolve": "1.10.0",
     "resolve-url-loader": "3.0.0",

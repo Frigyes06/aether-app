@@ -5,7 +5,7 @@
 export {} // This says this file is a module, not a script.
 
 // Imports
-const grpc = require('grpc')
+const grpc = require('@grpc/grpc-js')
 // const resolve = require('path').resolve
 
 // Consts
