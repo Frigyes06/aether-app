@@ -1025,7 +1025,7 @@ proto.clapi.InflightBoard.prototype.setStatus = function (value) {
 };
 
 proto.clapi.InflightBoard.prototype.clearStatus = function () {
-  this.setStatus(undefined);
+  this.setStatus();
 };
 
 /**
@@ -1052,7 +1052,7 @@ proto.clapi.InflightBoard.prototype.setEntity = function (value) {
 };
 
 proto.clapi.InflightBoard.prototype.clearEntity = function () {
-  this.setEntity(undefined);
+  this.setEntity();
 };
 
 /**
@@ -1229,7 +1229,7 @@ proto.clapi.InflightThread.prototype.setStatus = function (value) {
 };
 
 proto.clapi.InflightThread.prototype.clearStatus = function () {
-  this.setStatus(undefined);
+  this.setStatus();
 };
 
 /**
@@ -1256,7 +1256,7 @@ proto.clapi.InflightThread.prototype.setEntity = function (value) {
 };
 
 proto.clapi.InflightThread.prototype.clearEntity = function () {
-  this.setEntity(undefined);
+  this.setEntity();
 };
 
 /**
@@ -1425,7 +1425,7 @@ proto.clapi.InflightPost.prototype.setStatus = function (value) {
 };
 
 proto.clapi.InflightPost.prototype.clearStatus = function () {
-  this.setStatus(undefined);
+  this.setStatus();
 };
 
 /**
@@ -1452,7 +1452,7 @@ proto.clapi.InflightPost.prototype.setEntity = function (value) {
 };
 
 proto.clapi.InflightPost.prototype.clearEntity = function () {
-  this.setEntity(undefined);
+  this.setEntity();
 };
 
 /**
@@ -1621,7 +1621,7 @@ proto.clapi.InflightVote.prototype.setStatus = function (value) {
 };
 
 proto.clapi.InflightVote.prototype.clearStatus = function () {
-  this.setStatus(undefined);
+  this.setStatus();
 };
 
 /**
@@ -1648,7 +1648,7 @@ proto.clapi.InflightVote.prototype.setEntity = function (value) {
 };
 
 proto.clapi.InflightVote.prototype.clearEntity = function () {
-  this.setEntity(undefined);
+  this.setEntity();
 };
 
 /**
@@ -1817,7 +1817,7 @@ proto.clapi.InflightKey.prototype.setStatus = function (value) {
 };
 
 proto.clapi.InflightKey.prototype.clearStatus = function () {
-  this.setStatus(undefined);
+  this.setStatus();
 };
 
 /**
@@ -1844,7 +1844,7 @@ proto.clapi.InflightKey.prototype.setEntity = function (value) {
 };
 
 proto.clapi.InflightKey.prototype.clearEntity = function () {
-  this.setEntity(undefined);
+  this.setEntity();
 };
 
 /**
@@ -2028,7 +2028,7 @@ proto.clapi.InflightTruststate.prototype.setStatus = function (value) {
 };
 
 proto.clapi.InflightTruststate.prototype.clearStatus = function () {
-  this.setStatus(undefined);
+  this.setStatus();
 };
 
 /**
@@ -2055,7 +2055,7 @@ proto.clapi.InflightTruststate.prototype.setEntity = function (value) {
 };
 
 proto.clapi.InflightTruststate.prototype.clearEntity = function () {
-  this.setEntity(undefined);
+  this.setEntity();
 };
 
 /**
@@ -2729,7 +2729,7 @@ proto.clapi.AmbientStatusPayload.prototype.setBackendambientstatus = function (
 
 proto.clapi.AmbientStatusPayload.prototype.clearBackendambientstatus =
   function () {
-    this.setBackendambientstatus(undefined);
+    this.setBackendambientstatus();
   };
 
 /**
@@ -2765,7 +2765,7 @@ proto.clapi.AmbientStatusPayload.prototype.setFrontendambientstatus = function (
 
 proto.clapi.AmbientStatusPayload.prototype.clearFrontendambientstatus =
   function () {
-    this.setFrontendambientstatus(undefined);
+    this.setFrontendambientstatus();
   };
 
 /**
@@ -2793,7 +2793,7 @@ proto.clapi.AmbientStatusPayload.prototype.setInflights = function (value) {
 };
 
 proto.clapi.AmbientStatusPayload.prototype.clearInflights = function () {
-  this.setInflights(undefined);
+  this.setInflights();
 };
 
 /**
@@ -3128,7 +3128,7 @@ proto.clapi.AmbientLocalUserEntityPayload.prototype.setLocaluserentity =
 
 proto.clapi.AmbientLocalUserEntityPayload.prototype.clearLocaluserentity =
   function () {
-    this.setLocaluserentity(undefined);
+    this.setLocaluserentity();
   };
 
 /**
